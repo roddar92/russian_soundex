@@ -67,7 +67,7 @@ class Soundex(ABC):
     @abstractmethod
     def transform(self, word):
         """
-        Converts a given word th Soundex code
+        Converts a given word to Soundex code
         :param word: string
         :return: Soundex string code
         """
@@ -141,6 +141,11 @@ class RussianSoundex(Soundex):
         return word
 
     def transform(self, word):
+        """
+        Transforms a word into a sequence with coded phonemes
+        :param word: string
+        :return: Soundex string code
+        """
         if self.use_morph_analysis:
             word = self._use_morph_for_phoneme_replace(word)
         for replace, result in self._replacement_map.items():

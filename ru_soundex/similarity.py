@@ -1,4 +1,5 @@
 import editdistance
+from .soundex import Soundex
 
 
 class SoundexSimilarity:
@@ -8,6 +9,7 @@ class SoundexSimilarity:
         :param soundex: an object of Soundex class
         :param metrics: similarity function, optional, default is Levenstein distance
         """
+        assert isinstance(soundex, Soundex)
         self.soundex_converter = soundex
         self.metrics = metrics
 

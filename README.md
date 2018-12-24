@@ -10,12 +10,14 @@ Package has both implemented phoneme transformation into letter-number sequence 
 pip install ru_soundex
 ```
 
-2. Import Soundex algorithm. Package supports a lot of opportunities, it's possible to cut a result sequence (like in the original Soundex version) or code vowels too.
+2. Import Soundex algorithm.
+
+Package supports a lot of opportunities, it's possible to cut a result sequence (like in the original Soundex version) or also code vowels.
 
 ```python
-from ru_soundex.soundex import Soundex
+from ru_soundex.soundex import RussianSoundex
 
-soundex = Soundex(delete_first_letter=True)
+soundex = RussianSoundex(delete_first_letter=True)
 soundex.transform('ёлочка')
 ...
 
@@ -28,12 +30,14 @@ soundex.transform('ёлочка')
 JA7A53A
 ```
 
+> A structure of the library is scalable, `RussianSoundex` class inherits basic class `Soundex` (original for English language). In order to extend our algorithm, you need just inherit own class from `Soundex` and override methods.
+
 3. Import Soundex Similarity for usage of string comparision
 
 ```python
 from ru_soundex.similarity import SoundexSimilarity
 
-soundex = Soundex(delete_first_letter=True)
+soundex = RussianSoundex(delete_first_letter=True)
 similarity = SoundexSimilarity(soundex)
 similarity.similarity('ёлочка', 'йолочка')
 ...
