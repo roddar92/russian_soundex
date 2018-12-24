@@ -5,5 +5,5 @@ setup(
     name='ru_soundex',
     version='1.0',
     packages=find_packages(),
-    long_description=open(join(dirname(__file__), 'README.txt')).read(),
+    long_description=open(join(dirname(__file__), 'README.md')).read(), install_requires=['pymorphy2', 'editdistance']
 )

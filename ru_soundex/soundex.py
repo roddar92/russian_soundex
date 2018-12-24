@@ -79,6 +79,8 @@ class RussianSoundex(Soundex):
     _vowels_table = str.maketrans('аяоыиеёэюу', 'AAABBBBBCC')
     _table = str.maketrans('бпвфгкхдтжшчщзсцлмнр', '11223334455556667889')
     _ego_ogo_endings = re.compile(r'([ео])(г)(о$)', re.IGNORECASE)
+    _ia_ending = re.compile(r'[еи][ая]', re.IGNORECASE)
+    _ii_ending = re.compile(r'и[еио]', re.IGNORECASE)
 
     _replacement_map = {
         re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(я)', re.IGNORECASE): 'jа',
@@ -133,12 +135,16 @@ class RussianSoundex(Soundex):
             word = self._replace_ego_ogo_endings(word)
         return word
 
+    def _replace_vowels_seq(self, word):
+        word = self._ii_ending.sub('и', word)
+        word = self._ia_ending.sub('я', word)
+        return word
+
     def transform(self, word):
         if self.use_morph_analysis:
             word = self._use_morph_for_phoneme_replace(word)
         for replace, result in self._replacement_map.items():
             word = replace.sub(result, word)
         if self.code_vowels:
-            word = re.sub(r'и[еио]', 'и', word)
-            word = re.sub(r'[еи][ая]', 'я', word)
+            word = self._replace_vowels_seq(word)
         return self._apply_soundex_algorithm(word)
