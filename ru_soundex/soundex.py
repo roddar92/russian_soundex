@@ -84,13 +84,32 @@ class EnglishSoundex(Soundex):
     This version may have differences from original Soundex for English (consonants was splitted in more groups)
     """
     _hw_replacement = re.compile(r'[hw]', re.IGNORECASE)
+    _au_ending = re.compile(r'au', re.IGNORECASE)
+    _ea_ending = re.compile(r'e[ae]', re.IGNORECASE)
+    _oo_ue_ew_ending = re.compile(r'(ew|ue|oo)', re.IGNORECASE)
+    _iey_ending = re.compile(r'([ie]y|ai)', re.IGNORECASE)
+    _iye_ire_ending = re.compile(r'([iy]e|[iy]re)$', re.IGNORECASE)
+    _ye_ending = re.compile(r'^ye', re.IGNORECASE)
+    _ere_ending = re.compile(r'(e[ae]r|ere)$', re.IGNORECASE)
 
     _vowels = 'aeiouy'
     _vowels_table = str.maketrans('aoeiyu', 'AABBBC')
     _table = str.maketrans('bpfvcksgjqxzdtlmnr', '112233344555667889')
 
+    def _replace_vowels_seq(self, word):
+        word = self._ye_ending.sub('je', word)
+        word = self._au_ending.sub('o', word)
+        word = self._ea_ending.sub('e', word)
+        word = self._oo_ue_ew_ending.sub('u', word)
+        word = self._iey_ending.sub('ei', word)
+        word = self._iye_ire_ending.sub('ai', word)
+        word = self._ere_ending.sub('ie', word)
+        return word
+
     def transform(self, word):
         word = self._hw_replacement.sub('', word)
+        if self.code_vowels:
+            word = self._replace_vowels_seq(word)
         return self._apply_soundex_algorithm(word)
 
 
