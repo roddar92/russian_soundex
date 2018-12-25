@@ -2,10 +2,10 @@ import editdistance
 from .soundex import Soundex
 
 
-class SoundexSimilarity:
+class SoundexDistance:
     def __init__(self, soundex, metrics=editdistance.eval):
         """
-        Init a similarity object
+        Init a distance object
         :param soundex: an object of Soundex class
         :param metrics: similarity function, optional, default is Levenstein distance
         """
@@ -13,9 +13,9 @@ class SoundexSimilarity:
         self.soundex_converter = soundex
         self.metrics = metrics
 
-    def similarity(self, word1, word2):
+    def distance(self, word1, word2):
         """
-        Compute the similarity between Soundex codes
+        Compute the distance between Soundex codes
         :param word1: first original word
         :param word2: second original word
         :return: distance value
