@@ -5,23 +5,25 @@ import pymorphy2
 
 class Soundex(ABC):
     _vowels = ''
-    _table = str.maketrans('', '')
+    _table, _vowels_table = str.maketrans('', ''), str.maketrans('', '')
     _reduce_regex = re.compile(r'(\w)(\1)+', re.IGNORECASE)
     _vowels_regex = re.compile(r'(0+)', re.IGNORECASE)
 
     def __init__(self, delete_first_letter=False, delete_first_coded_letter=False,
-                 delete_zeros=False, cut_result=False, seq_cutted_len=4):
+                 delete_zeros=False, code_vowels=False, cut_result=False, seq_cutted_len=4):
         """
         Initialization of Soundex object
         :param delete_first_letter: remove the first letter from the result code (A169 -> 169)
         :param delete_first_coded_letter: remove the first coded letter from the result code (A0169 -> A169)
         :param delete_zeros: remove vowels from the result code
+        :param code_vowels: group and code vowels as ABC letters
         :param cut_result: cut result core till N symbols
         :param seq_cutted_len: length of the result code
         """
         self.delete_first_letter = delete_first_letter
         self.delete_first_coded_letter = delete_first_coded_letter
         self.delete_zeros = delete_zeros
+        self.code_vowels = code_vowels
         self.cut_result = cut_result
         self.seq_cutted_len = seq_cutted_len
 
@@ -32,7 +34,10 @@ class Soundex(ABC):
         return self._reduce_regex.sub(r'\1', seq)
 
     def _translate_vowels(self, word):
-        return ''.join('0' if self._is_vowel(letter) else letter for letter in word)
+        if self.code_vowels:
+            return word.translate(self._vowels_table)
+        else:
+            return ''.join('0' if self._is_vowel(letter) else letter for letter in word)
 
     def _remove_vowels_and_paired_sounds(self, seq):
         seq = self._vowels_regex.sub('', seq)
@@ -74,9 +79,41 @@ class Soundex(ABC):
         return None
 
 
+class EnglishSoundex(Soundex):
+    """
+    This version may have differences from original Soundex for English (consonants was splitted in more groups)
+    """
+    _hw_replacement = re.compile(r'[hw]', re.IGNORECASE)
+
+    _vowels = 'aeiouy'
+    _vowels_table = str.maketrans('aoeiyu', 'AABBBC')
+    _table = str.maketrans('bpfvcksgjqxzdtlmnr', '112233344555667889')
+
+    def transform(self, word):
+        word = self._hw_replacement.sub('', word)
+        return self._apply_soundex_algorithm(word)
+
+
+class FinnishSoundex(Soundex):
+    """
+    Soundex for Finnish language
+    """
+    _ts_replacement = re.compile(r'ts', re.IGNORECASE)
+    _x_replacement = re.compile(r'x', re.IGNORECASE)
+
+    _vowels = 'aäeioöuy'
+    _vowels_table = str.maketrans('aäoeiöuy', 'AAABBBCC')
+    _table = str.maketrans('bpfvcszkgqdtlmnrj', '11223334445567789')
+
+    def transform(self, word):
+        word = self._ts_replacement.sub('s', word)
+        word = self._x_replacement.sub('ks', word)
+        return self._apply_soundex_algorithm(word)
+
+
 class RussianSoundex(Soundex):
     _vowels = 'аэиоуыеёюя'
-    _vowels_table = str.maketrans('аяоыиеёэюу', 'AAABBBBBCC')
+    _vowels_table = str.maketrans('аяоыиеёэюу', 'AAAABBBBCC')
     _table = str.maketrans('бпвфгкхдтжшчщзсцлмнр', '11223334455556667889')
     _ego_ogo_endings = re.compile(r'([ео])(г)(о$)', re.IGNORECASE)
     _ia_ending = re.compile(r'[еи][ая]', re.IGNORECASE)
@@ -108,23 +145,17 @@ class RussianSoundex(Soundex):
         :param delete_first_letter:
         :param delete_first_coded_letter:
         :param delete_zeros:
+        :param code_vowels:
         :param cut_result:
         :param seq_cutted_len:
         :param use_morph_analysis: use morphological grammems for phonemes analysis
         :param code_vowels: group and code vowels as ABC letters
         """
         super(RussianSoundex, self).__init__(delete_first_letter, delete_first_coded_letter,
-                                             delete_zeros, cut_result, seq_cutted_len)
+                                             delete_zeros, code_vowels, cut_result, seq_cutted_len)
 
-        self.code_vowels = code_vowels
         self.use_morph_analysis = use_morph_analysis
         self._moprh = pymorphy2.MorphAnalyzer()
-
-    def _translate_vowels(self, word):
-        if self.code_vowels:
-            return word.translate(self._vowels_table)
-        else:
-            return super(RussianSoundex, self)._translate_vowels(word)
 
     def _replace_ego_ogo_endings(self, word):
         return self._ego_ogo_endings.sub(r'\1в\3', word)

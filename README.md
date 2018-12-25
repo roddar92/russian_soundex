@@ -1,5 +1,5 @@
 # Soundex for Russian
-Russian Phonetic algorithm based on Soundex.
+Russian, English and Finnish Phonetic algorithm based on Soundex.
 
 Package has both implemented phoneme transformation into letter-number sequence and similarity engine for comparison of Soundex sequences (based on Levenstein distance).
 
@@ -7,7 +7,7 @@ Package has both implemented phoneme transformation into letter-number sequence 
 1. Install this package via ```pip```
 
 ```python
-pip install russian_soundex
+pip install ru-soundex
 ```
 
 2. Import Soundex algorithm.
