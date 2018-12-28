@@ -1,13 +1,13 @@
-# Soundex for Russian
-Russian, English and Finnish Phonetic algorithm based on Soundex.
+# Fonetika
+Russian, English and Finnish Phonetic algorithm based on Soundex/Metaphone.
 
-Package has both implemented phoneme transformation into letter-number sequence and distance engine for comparison of Soundex sequences (based on Levenstein distance).
+Package has both implemented phoneme transformation into letter-number sequence and distance engine for comparison of phonetic sequences (based on Levenstein and Hamming distances).
 
 ### Quick start
 1. Install this package via ```pip```
 
 ```python
-pip install ru-soundex
+pip install fonetika
 ```
 
 2. Import Soundex algorithm.
@@ -15,7 +15,7 @@ pip install ru-soundex
 Package supports a lot of opportunities, it's possible to cut a result sequence (like in the original Soundex version) or also code vowels.
 
 ```python
-from ru_soundex.soundex import RussianSoundex
+from fonetika.soundex import RussianSoundex
 
 soundex = RussianSoundex(delete_first_letter=True)
 soundex.transform('ёлочка')
@@ -35,11 +35,11 @@ JA7A53A
 3. Import Soundex distance for usage of string comparision
 
 ```python
-from ru_soundex.distance import SoundexDistance
+from fonetika.distance import PhoneticsDistance
 
 soundex = RussianSoundex(delete_first_letter=True)
-soundex_distance = SoundexDistance(soundex)
-soundex_distance.distance('ёлочка', 'йолочка')
+phon_distance = PhoneticsDistance(soundex)
+phon_distance.distance('ёлочка', 'йолочка')
 ...
 
 0

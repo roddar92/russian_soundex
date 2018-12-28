@@ -1,12 +1,12 @@
-import re
-from abc import ABC, abstractmethod
 import pymorphy2
+import re
+
+from .base import BasePhoneticsAlgorithm
 
 
-class Soundex(ABC):
-    _vowels = ''
+class Soundex(BasePhoneticsAlgorithm):
+
     _table, _vowels_table = str.maketrans('', ''), str.maketrans('', '')
-    _reduce_regex = re.compile(r'(\w)(\1)+', re.IGNORECASE)
     _vowels_regex = re.compile(r'(0+)', re.IGNORECASE)
 
     def __init__(self, delete_first_letter=False, delete_first_coded_letter=False,
@@ -29,9 +29,6 @@ class Soundex(ABC):
 
     def _is_vowel(self, letter):
         return letter in self._vowels
-
-    def _reduce_seq(self, seq):
-        return self._reduce_regex.sub(r'\1', seq)
 
     def _translate_vowels(self, word):
         if self.code_vowels:
@@ -69,14 +66,8 @@ class Soundex(ABC):
     def is_delete_first_letter(self):
         return self.delete_first_letter
 
-    @abstractmethod
     def transform(self, word):
-        """
-        Converts a given word to Soundex code
-        :param word: string
-        :return: Soundex string code
-        """
-        return None
+        return self._apply_soundex_algorithm(word)
 
 
 class EnglishSoundex(Soundex):
