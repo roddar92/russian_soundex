@@ -70,7 +70,8 @@ class RussianMetaphone(Metaphone):
     def _deaf_consonants_letters(self, word):
         res = []
         for i, letter in enumerate(word):
-            if i == len(word) - 1 or letter in 'бздвг' and word[i + 1] not in 'лмнр':
+            if i == len(word) - 1 or \
+                    letter in 'бздвг' and (word[i + 1] not in 'лмнр' or word[i + 1] not in self._vowels):
                 res += [letter.translate(self._deaf_consonants)]
             else:
                 res += [letter]
