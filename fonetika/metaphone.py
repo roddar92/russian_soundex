@@ -35,11 +35,15 @@ class RussianMetaphone(Metaphone):
 
     _j_vowel_regex = re.compile(r'[ий][ео]', re.I)
 
+    _replacement_vowel_map = {
+        re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(я)', re.I): 'йа',
+        re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(ю)', re.I): 'йу',
+        re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(е)', re.I): 'йе',
+        re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(ё)', re.I): 'йо',
+        re.compile(r'[ъь]', re.I): ''
+    }
+
     _replacement_map = {
-        re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(я)', re.IGNORECASE): 'йа',
-        re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(ю)', re.IGNORECASE): 'йу',
-        re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(е)', re.IGNORECASE): 'йе',
-        re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(ё)', re.IGNORECASE): 'йо',
         re.compile(r'([тсзжцчшщ])([жцчшщ])', re.I): r'\2',
         re.compile(r'(с)(т)([лнц])', re.I): r'\1\3',
         re.compile(r'(н)([тд])(ств)', re.I): r'\1\3',
@@ -48,7 +52,6 @@ class RussianMetaphone(Metaphone):
         re.compile(r'(з)(д)([нц])', re.I): r'\1\3',
         re.compile(r'(в)(ств)', re.I): r'\2',
         re.compile(r'(л)(нц)', re.I): r'\2',
-        re.compile(r'[ъь]', re.I): '',
         re.compile(r'([дт][сц])', re.I): 'ц'
     }
 
@@ -57,6 +60,8 @@ class RussianMetaphone(Metaphone):
         self.reduce_phonemes = reduce_phonemes
 
     def _replace_j_vowels(self, word):
+        for replace, result in self._replacement_vowel_map.items():
+            word = replace.sub(result, word)
         return self._j_vowel_regex.sub('и', word)
 
     def _reduce_phonemes(self, word):
@@ -81,4 +86,32 @@ class RussianMetaphone(Metaphone):
         if self.reduce_phonemes:
             word = self._reduce_phonemes(word)
         word = self._replace_j_vowels(word)
+        return self._apply_metaphone_algorithm(word)
+
+
+class FinnishMetaphone(Metaphone):
+    _vowels = 'aäeioöuy'
+    _deaf_consonants = str.maketrans('bvdg', 'pftk')
+    _vowels_table = str.maketrans('aäeioöuy', 'ÄÄÄÄIIIIУУ')
+
+    _z_replacement = re.compile(r'z', re.I)
+    _q_replacement = re.compile(r'q', re.I)
+    _w_replacement = re.compile(r'w', re.I)
+    _x_replacement = re.compile(r'x', re.I)
+
+    def _deaf_consonants_letters(self, word):
+        res = []
+        for i, letter in enumerate(word):
+            if i == len(word) - 1 or \
+                    letter in 'bvdg' and (word[i + 1] not in 'lmnr' or word[i + 1] not in self._vowels):
+                res += [letter.translate(self._deaf_consonants)]
+            else:
+                res += [letter]
+        return ''.join(res)
+
+    def transform(self, word):
+        word = self._z_replacement.sub('ts', word)
+        word = self._q_replacement.sub('k', word)
+        word = self._w_replacement.sub('v', word)
+        word = self._x_replacement.sub('ks', word)
         return self._apply_metaphone_algorithm(word)

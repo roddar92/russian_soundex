@@ -7,7 +7,7 @@ from .base import BasePhoneticsAlgorithm
 class Soundex(BasePhoneticsAlgorithm):
 
     _table, _vowels_table = str.maketrans('', ''), str.maketrans('', '')
-    _vowels_regex = re.compile(r'(0+)', re.IGNORECASE)
+    _vowels_regex = re.compile(r'(0+)', re.I)
 
     def __init__(self, delete_first_letter=False, delete_first_coded_letter=False,
                  delete_zeros=False, code_vowels=False, cut_result=False, seq_cutted_len=4):
@@ -74,14 +74,14 @@ class EnglishSoundex(Soundex):
     """
     This version may have differences from original Soundex for English (consonants was splitted in more groups)
     """
-    _hw_replacement = re.compile(r'[hw]', re.IGNORECASE)
-    _au_ending = re.compile(r'au', re.IGNORECASE)
-    _ea_ending = re.compile(r'e[ae]', re.IGNORECASE)
-    _oo_ue_ew_ending = re.compile(r'(ew|ue|oo)', re.IGNORECASE)
-    _iey_ending = re.compile(r'([ie]y|ai)', re.IGNORECASE)
-    _iye_ire_ending = re.compile(r'([iy]e|[iy]re)$', re.IGNORECASE)
-    _ye_ending = re.compile(r'^ye', re.IGNORECASE)
-    _ere_ending = re.compile(r'(e[ae]r|ere)$', re.IGNORECASE)
+    _hw_replacement = re.compile(r'[hw]', re.I)
+    _au_ending = re.compile(r'au', re.I)
+    _ea_ending = re.compile(r'e[ae]', re.I)
+    _oo_ue_ew_ending = re.compile(r'(ew|ue|oo)', re.I)
+    _iey_ending = re.compile(r'([ie]y|ai)', re.I)
+    _iye_ire_ending = re.compile(r'([iy]e|[iy]re)$', re.I)
+    _ye_ending = re.compile(r'^ye', re.I)
+    _ere_ending = re.compile(r'(e[ae]r|ere)$', re.I)
 
     _vowels = 'aeiouy'
     _vowels_table = str.maketrans('aoeiyu', 'AABBBC')
@@ -108,15 +108,15 @@ class FinnishSoundex(Soundex):
     """
     Soundex for Finnish language
     """
-    _ts_replacement = re.compile(r'ts', re.IGNORECASE)
-    _x_replacement = re.compile(r'x', re.IGNORECASE)
+    _z_replacement = re.compile(r'z', re.I)
+    _x_replacement = re.compile(r'x', re.I)
 
     _vowels = 'aäeioöuy'
     _vowels_table = str.maketrans('aäoeiöuy', 'AAABBBCC')
     _table = str.maketrans('bpfvcszkgqdtlmnrj', '11223334445567789')
 
     def transform(self, word):
-        word = self._ts_replacement.sub('s', word)
+        word = self._z_replacement.sub('ts', word)
         word = self._x_replacement.sub('ks', word)
         return self._apply_soundex_algorithm(word)
 
@@ -125,26 +125,26 @@ class RussianSoundex(Soundex):
     _vowels = 'аэиоуыеёюя'
     _vowels_table = str.maketrans('аяоыиеёэюу', 'AAAABBBBCC')
     _table = str.maketrans('бпвфгкхдтжшчщзсцлмнр', '11223334455556667889')
-    _ego_ogo_endings = re.compile(r'([ео])(г)(о$)', re.IGNORECASE)
-    _ia_ending = re.compile(r'[еи][ая]', re.IGNORECASE)
-    _ii_ending = re.compile(r'и[еио]', re.IGNORECASE)
+    _ego_ogo_endings = re.compile(r'([ео])(г)(о$)', re.I)
+    _ia_ending = re.compile(r'[еи][ая]', re.I)
+    _ii_ending = re.compile(r'и[еио]', re.I)
 
     _replacement_map = {
-        re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(я)', re.IGNORECASE): 'jа',
-        re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(ю)', re.IGNORECASE): 'jу',
-        re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(е)', re.IGNORECASE): 'jэ',
-        re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(ё)', re.IGNORECASE): 'jо',
+        re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(я)', re.I): 'jа',
+        re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(ю)', re.I): 'jу',
+        re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(е)', re.I): 'jэ',
+        re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(ё)', re.I): 'jо',
         re.compile(r'й', re.IGNORECASE): 'j',
-        re.compile(r'([тсзжцчшщ])([жцчшщ])', re.IGNORECASE): r'\2',
-        re.compile(r'(с)(т)([лнц])', re.IGNORECASE): r'\1\3',
-        re.compile(r'(н)([тд])(ств)', re.IGNORECASE): r'\1\3',
-        re.compile(r'([нс])([тд])(ск)', re.IGNORECASE): r'\1\3',
-        re.compile(r'(р)(д)([чц])', re.IGNORECASE): r'\1\3',
-        re.compile(r'(з)(д)([нц])', re.IGNORECASE): r'\1\3',
-        re.compile(r'(в)(ств)', re.IGNORECASE): r'\2',
-        re.compile(r'(л)(нц)', re.IGNORECASE): r'\2',
-        re.compile(r'[ъь]', re.IGNORECASE): '',
-        re.compile(r'([дт][зсц])', re.IGNORECASE): 'ц'
+        re.compile(r'([тсзжцчшщ])([жцчшщ])', re.I): r'\2',
+        re.compile(r'(с)(т)([лнц])', re.I): r'\1\3',
+        re.compile(r'(н)([тд])(ств)', re.I): r'\1\3',
+        re.compile(r'([нс])([тд])(ск)', re.I): r'\1\3',
+        re.compile(r'(р)(д)([чц])', re.I): r'\1\3',
+        re.compile(r'(з)(д)([нц])', re.I): r'\1\3',
+        re.compile(r'(в)(ств)', re.I): r'\2',
+        re.compile(r'(л)(нц)', re.I): r'\2',
+        re.compile(r'[ъь]', re.I): '',
+        re.compile(r'([дт][зсц])', re.I): 'ц'
     }
 
     def __init__(self, delete_first_letter=False, delete_first_coded_letter=False,
