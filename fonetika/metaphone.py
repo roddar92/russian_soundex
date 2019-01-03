@@ -5,6 +5,10 @@ from .base import BasePhoneticsAlgorithm
 
 class Metaphone(BasePhoneticsAlgorithm):
     def __init__(self, compress_ending=False):
+        """
+        Initialization of Metaphone object
+        :param compress_ending: not used
+        """
         self.compress_ending = compress_ending
 
     _deaf_regex = re.compile(r'', re.I)
@@ -31,7 +35,7 @@ class Metaphone(BasePhoneticsAlgorithm):
 class RussianMetaphone(Metaphone):
     _vowels = 'аэиоуыеёюя'
     _deaf_consonants = str.maketrans('бздвг', 'пстфк')
-    _vowels_table = str.maketrans('аяоыиеёэюу', 'ЯЯЯЯИИИИУУ')
+    _vowels_table = str.maketrans('аяоыиеёэюу', 'ААААИИИИУУ')
 
     _j_vowel_regex = re.compile(r'[ий][ео]', re.I)
 
@@ -76,7 +80,7 @@ class RussianMetaphone(Metaphone):
         res = []
         for i, letter in enumerate(word):
             if i == len(word) - 1 or \
-                    letter in 'бздвг' and (word[i + 1] not in 'лмнр' or word[i + 1] not in self._vowels):
+                    letter in self._deaf_consonants and (word[i + 1] not in 'лмнр' or word[i + 1] not in self._vowels):
                 res += [letter.translate(self._deaf_consonants)]
             else:
                 res += [letter]
@@ -92,7 +96,7 @@ class RussianMetaphone(Metaphone):
 class FinnishMetaphone(Metaphone):
     _vowels = 'aäeioöuy'
     _deaf_consonants = str.maketrans('bvdg', 'pftk')
-    _vowels_table = str.maketrans('aäeioöuy', 'ÄÄÄÄIIIIУУ')
+    _vowels_table = str.maketrans('aäeioöuy', 'ÄÄIIIIУУ')
 
     _z_replacement = re.compile(r'z', re.I)
     _q_replacement = re.compile(r'q', re.I)
@@ -103,7 +107,7 @@ class FinnishMetaphone(Metaphone):
         res = []
         for i, letter in enumerate(word):
             if i == len(word) - 1 or \
-                    letter in 'bvdg' and (word[i + 1] not in 'lmnr' or word[i + 1] not in self._vowels):
+                    letter in self._deaf_consonants and (word[i + 1] not in 'lmnr' or word[i + 1] not in self._vowels):
                 res += [letter.translate(self._deaf_consonants)]
             else:
                 res += [letter]

@@ -20,8 +20,8 @@ class PhoneticsDistance:
         return editdistance.eval(word1, word2)
 
     _distance_metric = {
-        'levenstein': _levenstein,
-        'hamming': _hamming
+        'levenstein': _levenstein.__func__,
+        'hamming': _hamming.__func__,
     }
 
     def __init__(self, phonetics, metric_name='levenstein', metrics=None):
@@ -31,7 +31,6 @@ class PhoneticsDistance:
         :param metric_name: distance function name, optional, default is Levenstein distance
         :param metrics: another distance function, optional
         """
-        assert()
         assert isinstance(phonetics, BasePhoneticsAlgorithm)
         self.phonetics = phonetics
 
