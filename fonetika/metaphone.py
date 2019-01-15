@@ -48,12 +48,15 @@ class RussianMetaphone(Metaphone):
     }
 
     _replacement_map = {
+        re.compile(r'сч', re.I): r'щ',
         re.compile(r'([тсзжцчшщ])([жцчшщ])', re.I): r'\2',
         re.compile(r'(с)(т)([лнц])', re.I): r'\1\3',
         re.compile(r'(н)([тд])(ств)', re.I): r'\1\3',
         re.compile(r'([нс])([тд])(ск)', re.I): r'\1\3',
         re.compile(r'(р)(д)([чц])', re.I): r'\1\3',
         re.compile(r'(з)(д)([нц])', re.I): r'\1\3',
+        re.compile(r'(ль|н)(д)(ш)', re.I): r'\1\3',
+        re.compile(r'(н)(т)(г)', re.I): r'\1\3',
         re.compile(r'(в)(ств)', re.I): r'\2',
         re.compile(r'(л)(нц)', re.I): r'\2',
         re.compile(r'([дт][сц])', re.I): 'ц'
