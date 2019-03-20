@@ -153,7 +153,7 @@ class RussianSoundex(Soundex):
 
     def __init__(self, delete_first_letter=False, delete_first_coded_letter=False,
                  delete_zeros=False, cut_result=False, seq_cutted_len=4,
-                 code_vowels=False, use_morph_analysis=False):
+                 code_vowels=False, reduce_phonemes=True, use_morph_analysis=False):
         """
         Initialization of Russian Soundex object
         :param delete_first_letter:
@@ -164,10 +164,12 @@ class RussianSoundex(Soundex):
         :param seq_cutted_len:
         :param use_morph_analysis: use morphological grammems for phonemes analysis
         :param code_vowels: group and code vowels as ABC letters
+        :param reduce_phonemes: simplify sequences of Russian consonants
         """
         super(RussianSoundex, self).__init__(delete_first_letter, delete_first_coded_letter,
                                              delete_zeros, code_vowels, cut_result, seq_cutted_len)
 
+        self.reduce_phonemes = reduce_phonemes
         self.use_morph_analysis = use_morph_analysis
         self._moprh = pymorphy2.MorphAnalyzer()
 
@@ -185,6 +187,11 @@ class RussianSoundex(Soundex):
         word = self._ia_ending.sub('я', word)
         return word
 
+    def _reduce_phonemes(self, word):
+        for replace, result in self._replacement_map.items():
+            word = replace.sub(result, word)
+        return word
+
     def transform(self, word):
         """
         Transforms a word into a sequence with coded phonemes
@@ -193,8 +200,8 @@ class RussianSoundex(Soundex):
         """
         if self.use_morph_analysis:
             word = self._use_morph_for_phoneme_replace(word)
-        for replace, result in self._replacement_map.items():
-            word = replace.sub(result, word)
+        if self.reduce_phonemes:
+            word = self._reduce_phonemes(word)
         if self.code_vowels:
             word = self._replace_vowels_seq(word)
         return self._apply_soundex_algorithm(word)

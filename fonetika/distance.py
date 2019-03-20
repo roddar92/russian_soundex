@@ -32,6 +32,7 @@ class PhoneticsDistance:
         :param metrics: another distance function, optional
         """
         assert isinstance(phonetics, BasePhoneticsAlgorithm)
+        assert metric_name in self._distance_metric.keys()
         self.phonetics = phonetics
 
         if not metrics:

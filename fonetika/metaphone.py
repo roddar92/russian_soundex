@@ -11,11 +11,19 @@ class Metaphone(BasePhoneticsAlgorithm):
         """
         self.compress_ending = compress_ending
 
-    _deaf_regex = re.compile(r'', re.I)
+    _deaf_consonants = str.maketrans('', '')
     _vowels_table = str.maketrans('', '')
 
     def _deaf_consonants_letters(self, word):
         return word
+
+    def _reduce_deaf_consonants_letters(self, word, criteria):
+        res = []
+        for i, letter in enumerate(word):
+            if i == len(word) - 1 or letter in self._deaf_consonants and word[i + 1] not in criteria:
+                letter = letter.translate(self._deaf_consonants)
+            res += [letter]
+        return ''.join(res)
 
     def _compress_ending(self, word):
         return word
@@ -81,14 +89,7 @@ class RussianMetaphone(Metaphone):
         return word
 
     def _deaf_consonants_letters(self, word):
-        res = []
-        for i, letter in enumerate(word):
-            if i == len(word) - 1 or \
-                    letter in self._deaf_consonants and (word[i + 1] not in 'лмнр' or word[i + 1] not in self._vowels):
-                res += [letter.translate(self._deaf_consonants)]
-            else:
-                res += [letter]
-        return ''.join(res)
+        return self._reduce_deaf_consonants_letters(word, self._vowels + 'лмнр')
 
     def transform(self, word):
         if self.reduce_phonemes:
@@ -108,14 +109,7 @@ class FinnishMetaphone(Metaphone):
     _x_replacement = re.compile(r'x', re.I)
 
     def _deaf_consonants_letters(self, word):
-        res = []
-        for i, letter in enumerate(word):
-            if i == len(word) - 1 or \
-                    letter in self._deaf_consonants and (word[i + 1] not in 'lmnr' or word[i + 1] not in self._vowels):
-                res += [letter.translate(self._deaf_consonants)]
-            else:
-                res += [letter]
-        return ''.join(res)
+        return self._reduce_deaf_consonants_letters(word, self._vowels + 'lmnr')
 
     def transform(self, word):
         word = self._z_replacement.sub('ts', word)
