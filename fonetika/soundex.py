@@ -2,6 +2,7 @@ import pymorphy2
 import re
 
 from .base import BasePhoneticsAlgorithm
+from .config import RU_PHONEMES
 
 
 class Soundex(BasePhoneticsAlgorithm):
@@ -134,22 +135,9 @@ class RussianSoundex(Soundex):
         re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(ю)', re.I): 'jу',
         re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(е)', re.I): 'jэ',
         re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(ё)', re.I): 'jо',
-        re.compile(r'й', re.IGNORECASE): 'j',
-        re.compile(r'сч', re.I): r'щ',
-        re.compile(r'([тсзжцчшщ])([жцчшщ])', re.I): r'\2',
-        re.compile(r'(с)(т)([лнц])', re.I): r'\1\3',
-        re.compile(r'(н)([тд])(ств)', re.I): r'\1\3',
-        re.compile(r'([нс])([тд])(ск)', re.I): r'\1\3',
-        re.compile(r'(р)([гк])(ск)', re.I): r'\1\3',
-        re.compile(r'(р)(д)([чц])', re.I): r'\1\3',
-        re.compile(r'(з)(д)([нц])', re.I): r'\1\3',
-        re.compile(r'(ль|н)(д)(ш)', re.I): r'\1\3',
-        re.compile(r'(н)(т)(г)', re.I): r'\1\3',
-        re.compile(r'(в)(ств)', re.I): r'\2',
-        re.compile(r'(л)(нц)', re.I): r'\2',
-        re.compile(r'[ъь]', re.I): '',
-        re.compile(r'([дт][зсц])', re.I): 'ц'
+        re.compile(r'й', re.IGNORECASE): 'j'
     }
+    _replacement_map.update(RU_PHONEMES)
 
     def __init__(self, delete_first_letter=False, delete_first_coded_letter=False,
                  delete_zeros=False, cut_result=False, seq_cutted_len=4,
