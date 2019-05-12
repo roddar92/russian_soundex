@@ -1,7 +1,7 @@
 import re
 
 from .base import BasePhoneticsAlgorithm
-from .config import RU_PHONEMES
+from .config import RU_PHONEMES, FI_VOWELS, RU_VOWELS
 
 
 class Metaphone(BasePhoneticsAlgorithm):
@@ -42,9 +42,9 @@ class Metaphone(BasePhoneticsAlgorithm):
 
 
 class RussianMetaphone(Metaphone):
-    _vowels = 'аэиоуыеёюя'
+    _vowels = RU_VOWELS
     _deaf_consonants = str.maketrans('бздвг', 'пстфк')
-    _vowels_table = str.maketrans('аяоыиеёэюу', 'ААААИИИИУУ')
+    _vowels_table = str.maketrans(_vowels, 'ААААИИИИУУ')
 
     _j_vowel_regex = re.compile(r'[ий][ео]', re.I)
 
@@ -86,9 +86,9 @@ class RussianMetaphone(Metaphone):
 
 
 class FinnishMetaphone(Metaphone):
-    _vowels = 'aäeioöuy'
+    _vowels = FI_VOWELS
     _deaf_consonants = str.maketrans('bvdg', 'pftk')
-    _vowels_table = str.maketrans('aäeioöuy', 'ÄÄIIIIУУ')
+    _vowels_table = str.maketrans(FI_VOWELS, 'ÄÄOOOIII')
 
     _z_replacement = re.compile(r'z', re.I)
     _q_replacement = re.compile(r'q', re.I)

@@ -1,5 +1,9 @@
 import re
 
+EN_VOWELS = 'aoeiyu'
+FI_VOWELS = 'aäeoöiuy'
+RU_VOWELS = 'аяоыиеёэюу'
+
 RU_PHONEMES = {
     re.compile(r'(с?т|с)ч', re.I): r'щ',
     re.compile(r'([тсзжцчшщ])([жцчшщ])', re.I): r'\2',

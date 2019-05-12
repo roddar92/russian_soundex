@@ -2,7 +2,7 @@ import pymorphy2
 import re
 
 from .base import BasePhoneticsAlgorithm
-from .config import RU_PHONEMES
+from .config import RU_PHONEMES, RU_VOWELS, EN_VOWELS, FI_VOWELS
 
 
 class Soundex(BasePhoneticsAlgorithm):
@@ -84,8 +84,8 @@ class EnglishSoundex(Soundex):
     _ye_ending = re.compile(r'^ye', re.I)
     _ere_ending = re.compile(r'(e[ae]r|ere)$', re.I)
 
-    _vowels = 'aeiouy'
-    _vowels_table = str.maketrans('aoeiyu', 'AABBBC')
+    _vowels = EN_VOWELS
+    _vowels_table = str.maketrans(_vowels, 'AABBBC')
     _table = str.maketrans('bpfvcksgjqxzdtlmnr', '112233344555667889')
 
     def _replace_vowels_seq(self, word):
@@ -112,8 +112,8 @@ class FinnishSoundex(Soundex):
     _z_replacement = re.compile(r'z', re.I)
     _x_replacement = re.compile(r'x', re.I)
 
-    _vowels = 'aäeioöuy'
-    _vowels_table = str.maketrans('aäoeiöuy', 'AAABBBCC')
+    _vowels = FI_VOWELS
+    _vowels_table = str.maketrans(_vowels, 'AABBBCCC')
     _table = str.maketrans('bpfvcszkgqdtlmnrj', '11223334445567789')
 
     def transform(self, word):
@@ -123,8 +123,8 @@ class FinnishSoundex(Soundex):
 
 
 class RussianSoundex(Soundex):
-    _vowels = 'аэиоуыеёюя'
-    _vowels_table = str.maketrans('аяоыиеёэюу', 'AAAABBBBCC')
+    _vowels = RU_VOWELS
+    _vowels_table = str.maketrans(_vowels, 'AAAABBBBCC')
     _table = str.maketrans('бпвфгкхдтжшчщзсцлмнр', '11223334455556667889')
     _ego_ogo_endings = re.compile(r'([ео])(г)(о$)', re.I)
     _ia_ending = re.compile(r'[еи][ая]', re.I)
