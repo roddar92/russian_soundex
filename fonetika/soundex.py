@@ -2,7 +2,7 @@ import pymorphy2
 import re
 
 from .base import BasePhoneticsAlgorithm
-from .config import RU_PHONEMES, RU_VOWELS, EN_VOWELS, FI_VOWELS
+from .config import RU_PHONEMES, RU_VOWELS, EN_VOWELS, FI_VOWELS, EE_VOWELS
 
 
 class Soundex(BasePhoneticsAlgorithm):
@@ -113,7 +113,24 @@ class FinnishSoundex(Soundex):
     _x_replacement = re.compile(r'x', re.I)
 
     _vowels = FI_VOWELS
-    _vowels_table = str.maketrans(_vowels, 'AABBBCCC')
+    _vowels_table = str.maketrans(_vowels, 'AAABBBCC')
+    _table = str.maketrans('bpfvcszkgqdtlmnrj', '11223334445567789')
+
+    def transform(self, word):
+        word = self._z_replacement.sub('ts', word)
+        word = self._x_replacement.sub('ks', word)
+        return self._apply_soundex_algorithm(word)
+
+
+class EstonianSoundex(Soundex):
+    """
+    Soundex for Estonian language
+    """
+    _z_replacement = re.compile(r'z', re.I)
+    _x_replacement = re.compile(r'x', re.I)
+
+    _vowels = EE_VOWELS
+    _vowels_table = str.maketrans(_vowels, 'AAABBBBCC')
     _table = str.maketrans('bpfvcszkgqdtlmnrj', '11223334445567789')
 
     def transform(self, word):

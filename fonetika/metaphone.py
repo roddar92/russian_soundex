@@ -1,7 +1,7 @@
 import re
 
 from .base import BasePhoneticsAlgorithm
-from .config import RU_PHONEMES, FI_VOWELS, RU_VOWELS
+from .config import RU_PHONEMES, FI_VOWELS, RU_VOWELS, EE_VOWELS
 
 
 class Metaphone(BasePhoneticsAlgorithm):
@@ -88,7 +88,7 @@ class RussianMetaphone(Metaphone):
 class FinnishMetaphone(Metaphone):
     _vowels = FI_VOWELS
     _deaf_consonants = str.maketrans('bvdg', 'pftk')
-    _vowels_table = str.maketrans(FI_VOWELS, 'ÄÄOOOIII')
+    _vowels_table = str.maketrans(FI_VOWELS, 'ÄÄÄOOOII')
 
     _z_replacement = re.compile(r'z', re.I)
     _q_replacement = re.compile(r'q', re.I)
@@ -100,7 +100,30 @@ class FinnishMetaphone(Metaphone):
 
     def transform(self, word):
         word = self._z_replacement.sub('ts', word)
-        word = self._q_replacement.sub('k', word)
+        word = self._q_replacement.sub('kv', word)
         word = self._w_replacement.sub('v', word)
         word = self._x_replacement.sub('ks', word)
+        return self._apply_metaphone_algorithm(word)
+
+
+class EstonianMetaphone(Metaphone):
+    _vowels = FI_VOWELS
+    _deaf_consonants = str.maketrans('bvdg', 'pftk')
+    _vowels_table = str.maketrans(EE_VOWELS, 'ÄÄÄOOOOII')
+
+    _cz_replacement = re.compile(r'[cz]', re.I)
+    _q_replacement = re.compile(r'q', re.I)
+    _w_replacement = re.compile(r'w', re.I)
+    _x_replacement = re.compile(r'x', re.I)
+    _y_replacement = re.compile(r'y', re.I)
+
+    def _deaf_consonants_letters(self, word):
+        return self._reduce_deaf_consonants_letters(word, self._vowels + 'lmnr')
+
+    def transform(self, word):
+        word = self._cz_replacement.sub('ts', word)
+        word = self._q_replacement.sub('kv', word)
+        word = self._w_replacement.sub('v', word)
+        word = self._x_replacement.sub('ks', word)
+        word = self._y_replacement.sub('i', word)
         return self._apply_metaphone_algorithm(word)

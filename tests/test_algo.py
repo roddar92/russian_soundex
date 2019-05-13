@@ -1,6 +1,5 @@
-from fonetika.soundex import RussianSoundex
-from fonetika.metaphone import RussianMetaphone
-
+from fonetika.soundex import RussianSoundex, FinnishSoundex
+from fonetika.metaphone import RussianMetaphone, FinnishMetaphone
 
 metaphone_params = [
     ('шварцнегер', 'ШВАРЦНИГИР'),
@@ -10,6 +9,10 @@ metaphone_params = [
     ('рентген', 'РИНГИН'),
     ('выборгский', 'ВАБАРСКИЙ'),
     ('фельдшер', 'ФИЛШИР')
+]
+
+metaphone_finnish_params = [
+    ('yö', 'IO')
 ]
 
 soundex_with_vowels_params = [
@@ -30,10 +33,20 @@ soundex_params = [
     ('счастье', 'Щ064J0')
 ]
 
+soundex_finnish_params = [
+    ('yö', 'YB')
+]
+
 
 def test_metaphone():
     metaphone = RussianMetaphone(reduce_phonemes=True)
     for data, expected in metaphone_params:
+        assert metaphone.transform(data) == expected
+
+
+def test_finnish_metaphone():
+    metaphone = FinnishMetaphone()
+    for data, expected in metaphone_finnish_params:
         assert metaphone.transform(data) == expected
 
 
@@ -46,4 +59,9 @@ def test_soundex_with_vowels():
 def test_soundex_without_vowels():
     soundex = RussianSoundex(delete_first_coded_letter=True)
     for data, expected in soundex_params:
+        assert soundex.transform(data) == expected
+
+def test_finnish_soundex():
+    soundex = FinnishSoundex(delete_first_coded_letter=True, code_vowels=True)
+    for data, expected in soundex_finnish_params:
         assert soundex.transform(data) == expected
