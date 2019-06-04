@@ -1,16 +1,18 @@
 import re
 
-from .base import BasePhoneticsAlgorithm
+from .base.base import BasePhoneticsAlgorithm
 from .config import RU_PHONEMES, FI_VOWELS, RU_VOWELS, EE_VOWELS
 
 
 class Metaphone(BasePhoneticsAlgorithm):
-    def __init__(self, compress_ending=False):
+    def __init__(self, compress_ending=False, reduce_word=True):
         """
         Initialization of Metaphone object
         :param compress_ending: not used
+        :param reduce_word: remove repeated letters from word
         """
         self.compress_ending = compress_ending
+        self.reduce_word = reduce_word
 
     _deaf_consonants = str.maketrans('', '')
     _vowels_table = str.maketrans('', '')
@@ -30,7 +32,8 @@ class Metaphone(BasePhoneticsAlgorithm):
         return word
 
     def _apply_metaphone_algorithm(self, word):
-        word = self._reduce_seq(word)
+        if self.reduce_word:
+            word = self._reduce_seq(word)
         word = word.translate(self._vowels_table)
         word = self._deaf_consonants_letters(word)
         if self.compress_ending:

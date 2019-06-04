@@ -1,8 +1,8 @@
 import re
 
 EN_VOWELS = 'aoeiyu'
-EE_VOWELS = 'aäoeöõiuü'
-FI_VOWELS = 'aäoeöiuy'
+EE_VOWELS = 'aäoeöõiüu'
+FI_VOWELS = 'aäoeöiyu'
 RU_VOWELS = 'аяоыиеёэюу'
 
 RU_PHONEMES = {

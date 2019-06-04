@@ -35,12 +35,26 @@ JA7A53A
 3. Import Soundex distance for usage of string comparision
 
 ```python
-from fonetika.distance import PhoneticsDistance
+from fonetika.distance import PhoneticsInnerLanguageDistance
 
 soundex = RussianSoundex(delete_first_letter=True)
-phon_distance = PhoneticsDistance(soundex)
+phon_distance = PhoneticsInnerLanguageDistance(soundex)
 phon_distance.distance('ёлочка', 'йолочка')
 ...
 
 0
+```
+
+4. You can also calculate distance between words of two languages. It would be useful for working with one language family group.
+
+```python
+from fonetika.distance import PhoneticsBetweenLanguagesDistance
+
+m1 = FinnishMetaphone(reduce_word=False)
+m2 = EstonianMetaphone(reduce_word=False)
+phon_distance = PhoneticsBetweenLanguagesDistance(m1, m2)
+phon_distance.distance('yö', 'öö')
+...
+
+1
 ```
