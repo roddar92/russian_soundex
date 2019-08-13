@@ -2,7 +2,7 @@ import pymorphy2
 import re
 
 from .base.base import BasePhoneticsAlgorithm
-from .config import RU_PHONEMES, RU_VOWELS, EN_VOWELS, FI_VOWELS, EE_VOWELS
+from .config import RU_PHONEMES, RU_VOWELS, EN_VOWELS, FI_VOWELS, EE_VOWELS, RU_REPLACEMENT_VOWEL_MAP
 
 
 class Soundex(BasePhoneticsAlgorithm):
@@ -148,12 +148,9 @@ class RussianSoundex(Soundex):
     _ii_ending = re.compile(r'и[еио]', re.I)
 
     _replacement_map = {
-        re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(я)', re.I): 'jа',
-        re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(ю)', re.I): 'jу',
-        re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(е)', re.I): 'jэ',
-        re.compile(r'(^|ъ|ь|' + r'|'.join(_vowels) + r')(ё)', re.I): 'jо',
-        re.compile(r'й', re.IGNORECASE): 'j'
+        re.compile(r'й', re.I): 'j'
     }
+    _replacement_map.update(RU_REPLACEMENT_VOWEL_MAP)
     _replacement_map.update(RU_PHONEMES)
 
     def __init__(self, delete_first_letter=False, delete_first_coded_letter=False,

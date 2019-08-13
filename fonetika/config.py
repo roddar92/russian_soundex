@@ -20,3 +20,10 @@ RU_PHONEMES = {
     re.compile(r'(л)(нц)', re.I): r'\2',
     re.compile(r'([дт][сц])', re.I): 'ц'
 }
+
+RU_REPLACEMENT_VOWEL_MAP = {
+    re.compile(r'(^|ъ|ь|' + r'|'.join(RU_VOWELS) + r')(я)', re.I): 'jа',
+    re.compile(r'(^|ъ|ь|' + r'|'.join(RU_VOWELS) + r')(ю)', re.I): 'jу',
+    re.compile(r'(^|ъ|ь|' + r'|'.join(RU_VOWELS) + r')(е)', re.I): 'jэ',
+    re.compile(r'(^|ъ|ь|' + r'|'.join(RU_VOWELS) + r')(ё)', re.I): 'jо'
+}
