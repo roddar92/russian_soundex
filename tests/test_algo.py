@@ -7,8 +7,9 @@ metaphone_params = [
     ('Шворцнегир', 'ШВАРЦНИГИР'),
     ('ландшафт', 'ЛАНШАФТ'),
     ('рентген', 'РИНГИН'),
-    ('выборгский', 'ВАБАРСКИЙ'),
-    ('фельдшер', 'ФИЛШИР')
+    ('выборгский', 'ВАБАРСКИJ'),
+    ('фельдшер', 'ФИЛШИР'),
+    ('бильярд', 'БИЛJАРТ')
 ]
 
 metaphone_finnish_params = [
@@ -21,7 +22,8 @@ soundex_with_vowels_params = [
     ('рентген', 'РB83B8'),
     ('выборгский', 'ВA1A963BJ'),
     ('щастье', 'ЩA64JB'),
-    ('счастье', 'ЩA64JB')
+    ('счастье', 'ЩA64JB'),
+    ('бильярд', 'БB7JA94')
 ]
 
 soundex_params = [
@@ -60,6 +62,7 @@ def test_soundex_without_vowels():
     soundex = RussianSoundex(delete_first_coded_letter=True)
     for data, expected in soundex_params:
         assert soundex.transform(data) == expected
+
 
 def test_finnish_soundex():
     soundex = FinnishSoundex(delete_first_coded_letter=True, code_vowels=True)

@@ -3,6 +3,8 @@ Russian, English, Estonian and Finnish Phonetic algorithm based on Soundex/Metap
 
 Package has both implemented phoneme transformation into letter-number sequence and distance engine for comparison of phonetic sequences (based on Levenstein and Hamming distances).
 
+Furthermore, both Russian phonetic algorithms supports preprocessing for specific phoneme cases.
+
 ### Quick start
 1. Install this package via ```pip```
 

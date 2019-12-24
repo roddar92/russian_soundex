@@ -147,10 +147,10 @@ class RussianSoundex(Soundex):
     _ia_ending = re.compile(r'[еи][ая]', re.I)
     _ii_ending = re.compile(r'и[еио]', re.I)
 
-    _replacement_map = {
+    _replacement_map = RU_REPLACEMENT_VOWEL_MAP
+    _replacement_map.update({
         re.compile(r'й', re.I): 'j'
-    }
-    _replacement_map.update(RU_REPLACEMENT_VOWEL_MAP)
+    })
     _replacement_map.update(RU_PHONEMES)
 
     def __init__(self, delete_first_letter=False, delete_first_coded_letter=False,
