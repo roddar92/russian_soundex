@@ -21,23 +21,23 @@ class Soundex(BasePhoneticsAlgorithm):
         :param cut_result: cut result core till N symbols
         :param seq_cutted_len: length of the result code
         """
-        self.delete_first_letter = delete_first_letter
-        self.delete_first_coded_letter = delete_first_coded_letter
-        self.delete_zeros = delete_zeros
-        self.code_vowels = code_vowels
-        self.cut_result = cut_result
-        self.seq_cutted_len = seq_cutted_len
+        self.__delete_first_letter = delete_first_letter
+        self.__delete_first_coded_letter = delete_first_coded_letter
+        self.__delete_zeros = delete_zeros
+        self._code_vowels = code_vowels
+        self.__cut_result = cut_result
+        self.__seq_cutted_len = seq_cutted_len
 
-    def _is_vowel(self, letter):
+    def __is_vowel(self, letter):
         return letter in self._vowels
 
-    def _translate_vowels(self, word):
-        if self.code_vowels:
+    def __translate_vowels(self, word):
+        if self._code_vowels:
             return word.translate(self._vowels_table)
         else:
-            return ''.join('0' if self._is_vowel(letter) else letter for letter in word)
+            return ''.join('0' if self.__is_vowel(letter) else letter for letter in word)
 
-    def _remove_vowels_and_paired_sounds(self, seq):
+    def __remove_vowels_and_paired_sounds(self, seq):
         seq = self._vowels_regex.sub('', seq)
         seq = self._reduce_seq(seq)
         return seq
@@ -46,26 +46,26 @@ class Soundex(BasePhoneticsAlgorithm):
         word = word.lower()
         first, last = word[0], word
         last = last.translate(self._table)
-        last = self._translate_vowels(last)
+        last = self.__translate_vowels(last)
         last = self._reduce_seq(last)
-        if self.delete_zeros:
-            last = self._remove_vowels_and_paired_sounds(last)
-        if self.cut_result:
-            last = last[:self.seq_cutted_len] if len(last) >= self.seq_cutted_len else last
-            last += ('0' * (self.seq_cutted_len - len(last)))
-        if self.delete_first_coded_letter:
+        if self.__delete_zeros:
+            last = self.__remove_vowels_and_paired_sounds(last)
+        if self.__cut_result:
+            last = last[:self.__seq_cutted_len] if len(last) >= self.__seq_cutted_len else last
+            last += ('0' * (self.__seq_cutted_len - len(last)))
+        if self.__delete_first_coded_letter:
             last = last[1:]
-        first_char = '' if self.delete_first_letter else first.capitalize()
+        first_char = '' if self.__delete_first_letter else first.capitalize()
         return first_char + last.upper()
 
     def get_vowels(self):
         return self._vowels
 
     def is_delete_first_coded_letter(self):
-        return self.delete_first_coded_letter
+        return self.__delete_first_coded_letter
 
     def is_delete_first_letter(self):
-        return self.delete_first_letter
+        return self.__delete_first_letter
 
     def transform(self, word):
         return self._apply_soundex_algorithm(word)
@@ -75,32 +75,32 @@ class EnglishSoundex(Soundex):
     """
     This version may have differences from original Soundex for English (consonants was splitted in more groups)
     """
-    _hw_replacement = re.compile(r'[hw]', re.I)
-    _au_ending = re.compile(r'au', re.I)
-    _ea_ending = re.compile(r'e[ae]', re.I)
-    _oo_ue_ew_ending = re.compile(r'(ew|ue|oo)', re.I)
-    _iey_ending = re.compile(r'([ie]y|ai)', re.I)
-    _iye_ire_ending = re.compile(r'([iy]e|[iy]re)$', re.I)
-    _ye_ending = re.compile(r'^ye', re.I)
-    _ere_ending = re.compile(r'(e[ae]r|ere)$', re.I)
+    __hw_replacement = re.compile(r'[hw]', re.I)
+    __au_ending = re.compile(r'au', re.I)
+    __ea_ending = re.compile(r'e[ae]', re.I)
+    __oo_ue_ew_ending = re.compile(r'(ew|ue|oo)', re.I)
+    __iey_ending = re.compile(r'([ie]y|ai)', re.I)
+    __iye_ire_ending = re.compile(r'([iy]e|[iy]re)$', re.I)
+    __ye_ending = re.compile(r'^ye', re.I)
+    __ere_ending = re.compile(r'(e[ae]r|ere)$', re.I)
 
     _vowels = EN_VOWELS
     _vowels_table = str.maketrans(_vowels, 'AABBBC')
     _table = str.maketrans('bpfvcksgjqxzdtlmnr', '112233344555667889')
 
     def _replace_vowels_seq(self, word):
-        word = self._ye_ending.sub('je', word)
-        word = self._au_ending.sub('o', word)
-        word = self._ea_ending.sub('e', word)
-        word = self._oo_ue_ew_ending.sub('u', word)
-        word = self._iey_ending.sub('ei', word)
-        word = self._iye_ire_ending.sub('ai', word)
-        word = self._ere_ending.sub('ie', word)
+        word = self.__ye_ending.sub('je', word)
+        word = self.__au_ending.sub('o', word)
+        word = self.__ea_ending.sub('e', word)
+        word = self.__oo_ue_ew_ending.sub('u', word)
+        word = self.__iey_ending.sub('ei', word)
+        word = self.__iye_ire_ending.sub('ai', word)
+        word = self.__ere_ending.sub('ie', word)
         return word
 
     def transform(self, word):
-        word = self._hw_replacement.sub('', word)
-        if self.code_vowels:
+        word = self.__hw_replacement.sub('', word)
+        if self._code_vowels:
             word = self._replace_vowels_seq(word)
         return self._apply_soundex_algorithm(word)
 
@@ -109,16 +109,16 @@ class FinnishSoundex(Soundex):
     """
     Soundex for Finnish language
     """
-    _z_replacement = re.compile(r'z', re.I)
-    _x_replacement = re.compile(r'x', re.I)
+    __z_replacement = re.compile(r'z', re.I)
+    __x_replacement = re.compile(r'x', re.I)
 
     _vowels = FI_VOWELS
     _vowels_table = str.maketrans(_vowels, 'AAABBBCC')
     _table = str.maketrans('bpfvcszkgqdtlmnrj', '11223334445567789')
 
     def transform(self, word):
-        word = self._z_replacement.sub('ts', word)
-        word = self._x_replacement.sub('ks', word)
+        word = self.__z_replacement.sub('ts', word)
+        word = self.__x_replacement.sub('ks', word)
         return self._apply_soundex_algorithm(word)
 
 
@@ -126,16 +126,16 @@ class EstonianSoundex(Soundex):
     """
     Soundex for Estonian language
     """
-    _z_replacement = re.compile(r'z', re.I)
-    _x_replacement = re.compile(r'x', re.I)
+    __z_replacement = re.compile(r'z', re.I)
+    __x_replacement = re.compile(r'x', re.I)
 
     _vowels = EE_VOWELS
     _vowels_table = str.maketrans(_vowels, 'AAABBBBCC')
     _table = str.maketrans('bpfvcszkgqdtlmnrj', '11223334445567789')
 
     def transform(self, word):
-        word = self._z_replacement.sub('ts', word)
-        word = self._x_replacement.sub('ks', word)
+        word = self.__z_replacement.sub('ts', word)
+        word = self.__x_replacement.sub('ks', word)
         return self._apply_soundex_algorithm(word)
 
 
@@ -144,8 +144,8 @@ class RussianSoundex(Soundex):
     _vowels_table = str.maketrans(_vowels, 'AAAABBBBCC')
     _table = str.maketrans('бпвфгкхдтжшчщзсцлмнр', '11223334455556667889')
     _ego_ogo_endings = re.compile(r'([ео])(г)(о$)', re.I)
-    _ia_ending = re.compile(r'[еи][ая]', re.I)
-    _ii_ending = re.compile(r'и[еио]', re.I)
+    __ia_ending = re.compile(r'[еи][ая]', re.I)
+    __ii_ending = re.compile(r'и[еио]', re.I)
 
     _replacement_map = RU_REPLACEMENT_VOWEL_MAP
     _replacement_map.update({
@@ -185,8 +185,8 @@ class RussianSoundex(Soundex):
         return word
 
     def _replace_vowels_seq(self, word):
-        word = self._ii_ending.sub('и', word)
-        word = self._ia_ending.sub('я', word)
+        word = self.__ii_ending.sub('и', word)
+        word = self.__ia_ending.sub('я', word)
         return word
 
     def _reduce_phonemes(self, word):
@@ -204,6 +204,6 @@ class RussianSoundex(Soundex):
             word = self._use_morph_for_phoneme_replace(word)
         if self.reduce_phonemes:
             word = self._reduce_phonemes(word)
-        if self.code_vowels:
+        if self._code_vowels:
             word = self._replace_vowels_seq(word)
         return self._apply_soundex_algorithm(word)
