@@ -17,7 +17,7 @@ RU_PHONEMES = {
     re.compile(r'([тсзжцчшщ])([жцчшщ])', re.I): r'\2',
     re.compile(r'(с)(т)([лнц])', re.I): r'\1\3',
     re.compile(r'(н)([тд])(ств)', re.I): r'\1\3',
-    re.compile(r'([нс])([тд])(ск)', re.I): r'\1\3',
+    re.compile(r'([нс])([тдк])(ск)', re.I): r'\1\3',
     re.compile(r'(р)([гк])(ск)', re.I): r'\1\3',
     re.compile(r'(р)(д)([чц])', re.I): r'\1\3',
     re.compile(r'(з)(д)([нц])', re.I): r'\1\3',
