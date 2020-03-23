@@ -2,7 +2,7 @@ import pymorphy2
 import re
 
 from .base.base import BasePhoneticsAlgorithm
-from .config import RU_PHONEMES, RU_VOWELS, EN_VOWELS, FI_VOWELS, EE_VOWELS, RU_REPLACEMENT_VOWEL_MAP
+from .config import RU_PHONEMES, RU_VOWELS, EN_VOWELS, FI_VOWELS, EE_VOWELS, RU_REPLACEMENT_VOWEL_MAP, SE_VOWELS
 
 
 class Soundex(BasePhoneticsAlgorithm):
@@ -136,6 +136,45 @@ class EstonianSoundex(Soundex):
     def transform(self, word):
         word = self.__z_replacement.sub('ts', word)
         word = self.__x_replacement.sub('ks', word)
+        return self._apply_soundex_algorithm(word)
+
+
+class SwedenMetaphone(Soundex):
+    """
+    Soundex for Sweden language
+    """
+    _vowels = SE_VOWELS
+    _vowels_table = str.maketrans(_vowels, 'ÄÄÄÄOOOII')
+    _table = str.maketrans('bpfvcszkgqdtlmnrj', '11223334445567789')
+
+    __cz_replacement = re.compile(r'[cz]', re.I)
+    __c_replacement = re.compile(r'(c)([eiy])', re.I)
+    __q_replacement = re.compile(r'[cq]', re.I)
+    __w_replacement = re.compile(r'w', re.I)
+    __x_replacement = re.compile(r'x', re.I)
+    __z_replacement = re.compile(r'x', re.I)
+    __j_replacement = re.compile(r'([dghl])(j)', re.I)
+    __tj_replacement = re.compile(r'tj', re.I)
+    __ig_replacement = re.compile(r'(i)(g)($)', re.I)
+    __rs_replacement = re.compile(r'(rs|sch|ssj|stj|skj|sj|ch)', re.I)
+    __sk_replacement = re.compile(r'(sk)([eiyöäj])', re.I)
+    __stion_replacement = re.compile(r'[st]ion', re.I)
+    __k_replacement = re.compile(r'(k)([eiyöäj])', re.I)
+
+    def transform(self, word):
+        word = self.__cz_replacement.sub('ts', word)
+        word = self.__c_replacement.sub(r's\2', word)
+        word = self.__q_replacement.sub('k', word)
+        word = self.__j_replacement.sub(r'\2', word)
+        word = self.__w_replacement.sub('v', word)
+        word = self.__x_replacement.sub('ks', word)
+        word = self.__z_replacement.sub('s', word)
+        word = self.__sk_replacement.sub(r'sh\2', word)
+        word = self.__k_replacement.sub(r'sh\2', word)
+        word = self.__tj_replacement.sub('sh', word)
+        word = self.__ig_replacement.sub(r'\1\3', word)
+        word = self.__rs_replacement.sub('sh', word)
+        word = self.__stion_replacement.sub('shn', word)
         return self._apply_soundex_algorithm(word)
 
 

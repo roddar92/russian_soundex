@@ -1,5 +1,5 @@
 # Fonetika
-Russian, English, Estonian and Finnish Phonetic algorithm based on Soundex/Metaphone.
+Russian, English, Sweden, Estonian and Finnish Phonetic algorithm based on Soundex/Metaphone.
 
 Package has both implemented phoneme transformation into letter-number sequence and distance engine for comparison of phonetic sequences (based on Levenstein and Hamming distances).
 

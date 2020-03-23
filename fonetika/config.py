@@ -2,12 +2,14 @@ import re
 
 EN_VOWELS = 'aoeiyu'
 EE_VOWELS = 'aäoeöõiüu'
+SE_VOWELS = 'aäoåeöiuy'
 FI_VOWELS = 'aäoeöiyu'
 RU_VOWELS = 'аяоыиеёэюу'
 
 
 EE_DEAF_CONSONANTS = 'bvdg'
 FI_DEAF_CONSONANTS = 'bvdg'
+SE_DEAF_CONSONANTS = 'bvdg'
 RU_DEAF_CONSONANTS = 'бздвг'
 
 J_VOWEL_SEQ_RU = r'^|ъ|ь|' + r'|'.join(RU_VOWELS)
