@@ -135,30 +135,33 @@ class EstonianMetaphone(Metaphone):
 
 
 class SwedenMetaphone(Metaphone):
+    """
+    Metaphone for Sweden language
+    """
     _vowels = SE_VOWELS
     _deaf_consonants_seq = SE_DEAF_CONSONANTS
     _deaf_consonants = str.maketrans(_deaf_consonants_seq, 'pftk')
-    _vowels_table = str.maketrans(SE_VOWELS, 'ÄÄÄÄOOOII')
+    _vowels_table = str.maketrans(SE_VOWELS, 'AAAIIIIUU')
 
-    __cz_replacement = re.compile(r'[cz]', re.I)
     __c_replacement = re.compile(r'(c)([eiy])', re.I)
-    __q_replacement = re.compile(r'[cq]', re.I)
+    __q_replacement = re.compile(r'([cq]|ck)', re.I)
     __w_replacement = re.compile(r'w', re.I)
     __x_replacement = re.compile(r'x', re.I)
-    __z_replacement = re.compile(r'x', re.I)
+    __z_replacement = re.compile(r'z', re.I)
     __j_replacement = re.compile(r'([dghl])(j)', re.I)
     __tj_replacement = re.compile(r'tj', re.I)
+    __r_replacement = re.compile(r'(r)([ntl])', re.I)
     __ig_replacement = re.compile(r'(i)(g)($)', re.I)
     __rs_replacement = re.compile(r'(rs|sch|ssj|stj|skj|sj|ch)', re.I)
     __sk_replacement = re.compile(r'(sk)([eiyöäj])', re.I)
     __stion_replacement = re.compile(r'[st]ion', re.I)
     __k_replacement = re.compile(r'(k)([eiyöäj])', re.I)
+    __g_replacement = re.compile(r'(g)([eiyöäj])', re.I)
 
     def _deaf_consonants_letters(self, word):
         return self._reduce_deaf_consonants_letters(word, self._vowels + 'lmnr')
 
     def transform(self, word):
-        word = self.__cz_replacement.sub('ts', word)
         word = self.__c_replacement.sub(r's\2', word)
         word = self.__q_replacement.sub('k', word)
         word = self.__j_replacement.sub(r'\2', word)
@@ -168,7 +171,9 @@ class SwedenMetaphone(Metaphone):
         word = self.__sk_replacement.sub(r'sh\2', word)
         word = self.__k_replacement.sub(r'sh\2', word)
         word = self.__tj_replacement.sub('sh', word)
+        word = self.__r_replacement.sub(r'\2', word)
         word = self.__ig_replacement.sub(r'\1\3', word)
         word = self.__rs_replacement.sub('sh', word)
         word = self.__stion_replacement.sub('shn', word)
+        word = self.__g_replacement.sub(r'j\2', word)
         return self._apply_metaphone_algorithm(word)

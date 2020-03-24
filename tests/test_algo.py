@@ -1,5 +1,5 @@
 from fonetika.soundex import RussianSoundex, FinnishSoundex
-from fonetika.metaphone import RussianMetaphone, FinnishMetaphone
+from fonetika.metaphone import RussianMetaphone, FinnishMetaphone, SwedenMetaphone
 
 metaphone_params = [
     ('шварцнегер', 'ШВАРЦНИГИР'),
@@ -16,6 +16,21 @@ metaphone_params = [
 
 metaphone_finnish_params = [
     ('yö', 'IO')
+]
+
+metaphone_sweden_params = [
+    ('kött', 'SHIT'),
+    ('sju', 'SHU'),
+    ('djur', 'JUR'),
+    ('clown', 'KLAVN'),
+    ('lycklig', 'LUKLI'),
+    ('dålig', 'DALI'),
+    ('barn', 'BAN'),
+    ('skina', 'SHINA'),
+    ('hjälm', 'JILM'),
+    ('skola', 'SKALA'),
+    ('genom', 'JINAM'),
+    ('flicka', 'FLIKA')
 ]
 
 soundex_with_vowels_params = [
@@ -55,6 +70,12 @@ def test_metaphone():
 def test_finnish_metaphone():
     metaphone = FinnishMetaphone()
     for data, expected in metaphone_finnish_params:
+        assert metaphone.transform(data) == expected
+
+
+def test_sweden_soundex():
+    metaphone = SwedenMetaphone()
+    for data, expected in metaphone_sweden_params:
         assert metaphone.transform(data) == expected
 
 
