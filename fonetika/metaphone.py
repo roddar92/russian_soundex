@@ -2,7 +2,8 @@ import re
 
 from .base.base import BasePhoneticsAlgorithm
 from .config import RU_PHONEMES, FI_VOWELS, RU_VOWELS, EE_VOWELS, \
-    RU_REPLACEMENT_VOWEL_MAP, RU_DEAF_CONSONANTS, FI_DEAF_CONSONANTS, EE_DEAF_CONSONANTS, SE_VOWELS, SE_DEAF_CONSONANTS
+    RU_REPLACEMENT_VOWEL_MAP, RU_DEAF_CONSONANTS, FI_DEAF_CONSONANTS, EE_DEAF_CONSONANTS, SE_VOWELS, SE_DEAF_CONSONANTS, \
+    SE_PHONEMES
 
 
 class Metaphone(BasePhoneticsAlgorithm):
@@ -143,37 +144,12 @@ class SwedenMetaphone(Metaphone):
     _deaf_consonants = str.maketrans(_deaf_consonants_seq, 'pftk')
     _vowels_table = str.maketrans(SE_VOWELS, 'AAAIIIIUU')
 
-    __c_replacement = re.compile(r'(c)([eiy])', re.I)
-    __q_replacement = re.compile(r'([cq]|ck)', re.I)
-    __w_replacement = re.compile(r'w', re.I)
-    __x_replacement = re.compile(r'x', re.I)
-    __z_replacement = re.compile(r'z', re.I)
-    __j_replacement = re.compile(r'([dghl])(j)', re.I)
-    __tj_replacement = re.compile(r'tj', re.I)
-    __r_replacement = re.compile(r'(r)([ntl])', re.I)
-    __ig_replacement = re.compile(r'(i)(g)($)', re.I)
-    __rs_replacement = re.compile(r'(rs|sch|ssj|stj|skj|sj|ch)', re.I)
-    __sk_replacement = re.compile(r'(sk)([eiyöäj])', re.I)
-    __stion_replacement = re.compile(r'[st]ion', re.I)
-    __k_replacement = re.compile(r'(k)([eiyöäj])', re.I)
-    __g_replacement = re.compile(r'(g)([eiyöäj])', re.I)
+    _replacement_phoneme_map = SE_PHONEMES
 
     def _deaf_consonants_letters(self, word):
         return self._reduce_deaf_consonants_letters(word, self._vowels + 'lmnr')
 
     def transform(self, word):
-        word = self.__c_replacement.sub(r's\2', word)
-        word = self.__q_replacement.sub('k', word)
-        word = self.__j_replacement.sub(r'\2', word)
-        word = self.__w_replacement.sub('v', word)
-        word = self.__x_replacement.sub('ks', word)
-        word = self.__z_replacement.sub('s', word)
-        word = self.__sk_replacement.sub(r'sh\2', word)
-        word = self.__k_replacement.sub(r'sh\2', word)
-        word = self.__tj_replacement.sub('sh', word)
-        word = self.__r_replacement.sub(r'\2', word)
-        word = self.__ig_replacement.sub(r'\1\3', word)
-        word = self.__rs_replacement.sub('sh', word)
-        word = self.__stion_replacement.sub('shn', word)
-        word = self.__g_replacement.sub(r'j\2', word)
+        for replace, result in self._replacement_phoneme_map.items():
+            word = replace.sub(result, word)
         return self._apply_metaphone_algorithm(word)

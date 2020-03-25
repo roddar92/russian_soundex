@@ -1,4 +1,4 @@
-from fonetika.soundex import RussianSoundex, FinnishSoundex
+from fonetika.soundex import RussianSoundex, FinnishSoundex, SwedenSoundex
 from fonetika.metaphone import RussianMetaphone, FinnishMetaphone, SwedenMetaphone
 
 metaphone_params = [
@@ -60,6 +60,21 @@ soundex_finnish_params = [
     ('yö', 'YB')
 ]
 
+soundex_sweden_params = [
+    ('kött', 'ZO5'),
+    ('sju', 'ZI'),
+    ('djur', 'JI8'),
+    ('clown', 'K6Ä27'),
+    ('lycklig', 'LI46O'),
+    ('dålig', 'DÄ6O'),
+    ('barn', 'BÄ7'),
+    ('skina', 'ZO7Ä'),
+    ('hjälm', 'JÄ67'),
+    ('skola', 'S4Ä6Ä'),
+    ('genom', 'JO7Ä7'),
+    ('flicka', 'F6O4Ä')
+]
+
 
 def test_metaphone():
     metaphone = RussianMetaphone(reduce_phonemes=True)
@@ -73,7 +88,7 @@ def test_finnish_metaphone():
         assert metaphone.transform(data) == expected
 
 
-def test_sweden_soundex():
+def test_sweden_metaphone():
     metaphone = SwedenMetaphone()
     for data, expected in metaphone_sweden_params:
         assert metaphone.transform(data) == expected
@@ -94,4 +109,10 @@ def test_soundex_without_vowels():
 def test_finnish_soundex():
     soundex = FinnishSoundex(delete_first_coded_letter=True, code_vowels=True)
     for data, expected in soundex_finnish_params:
+        assert soundex.transform(data) == expected
+
+
+def test_sweden_soundex():
+    soundex = SwedenSoundex(delete_first_coded_letter=True, code_vowels=True)
+    for data, expected in soundex_sweden_params:
         assert soundex.transform(data) == expected

@@ -2,7 +2,8 @@ import pymorphy2
 import re
 
 from .base.base import BasePhoneticsAlgorithm
-from .config import RU_PHONEMES, RU_VOWELS, EN_VOWELS, FI_VOWELS, EE_VOWELS, RU_REPLACEMENT_VOWEL_MAP, SE_VOWELS
+from .config import RU_PHONEMES, RU_VOWELS, EN_VOWELS, FI_VOWELS, EE_VOWELS, RU_REPLACEMENT_VOWEL_MAP, SE_VOWELS, \
+    SE_PHONEMES
 
 
 class Soundex(BasePhoneticsAlgorithm):
@@ -147,36 +148,12 @@ class SwedenSoundex(Soundex):
     _vowels_table = str.maketrans(_vowels, 'ÄÄÄÄOOOII')
     _table = str.maketrans('bpfvcszkgqdtlmnrj', '11223334445567789')
 
-    __c_replacement = re.compile(r'(c)([eiy])', re.I)
-    __q_replacement = re.compile(r'([cq]|ck)', re.I)
-    __w_replacement = re.compile(r'w', re.I)
-    __x_replacement = re.compile(r'x', re.I)
-    __z_replacement = re.compile(r'z', re.I)
-    __j_replacement = re.compile(r'([dghl])(j)', re.I)
-    __tj_replacement = re.compile(r'tj', re.I)
-    __r_replacement = re.compile(r'(r)([ntl])', re.I)
-    __ig_replacement = re.compile(r'(i)(g)($)', re.I)
-    __rs_replacement = re.compile(r'(rs|sch|ssj|stj|skj|sj|ch)', re.I)
-    __sk_replacement = re.compile(r'(sk)([eiyöäj])', re.I)
-    __stion_replacement = re.compile(r'[st]ion', re.I)
-    __k_replacement = re.compile(r'(k)([eiyöäj])', re.I)
-    __g_replacement = re.compile(r'(g)([eiyöäj])', re.I)
+    _replacement_map = SE_PHONEMES
 
     def transform(self, word):
-        word = self.__c_replacement.sub(r's\2', word)
-        word = self.__q_replacement.sub('k', word)
-        word = self.__j_replacement.sub(r'\2', word)
-        word = self.__w_replacement.sub('v', word)
-        word = self.__x_replacement.sub('ks', word)
-        word = self.__z_replacement.sub('s', word)
-        word = self.__sk_replacement.sub(r'sh\2', word)
-        word = self.__k_replacement.sub(r'sh\2', word)
-        word = self.__tj_replacement.sub('sh', word)
-        word = self.__r_replacement.sub(r'\2', word)
-        word = self.__ig_replacement.sub(r'\1\3', word)
-        word = self.__rs_replacement.sub('sh', word)
-        word = self.__stion_replacement.sub('shn', word)
-        word = self.__g_replacement.sub(r'j\2', word)
+        for replace, result in self._replacement_map.items():
+            word = replace.sub(result, word)
+        word = word.replace('sh', 'z')
         return self._apply_soundex_algorithm(word)
 
 
