@@ -29,7 +29,10 @@ metaphone_sweden_params = [
     ('skina', 'SHINA'),
     ('hjälm', 'JILM'),
     ('skola', 'SKALA'),
+    ('skjorta', 'SHATA'),
     ('genom', 'JINAM'),
+    ('läxa', 'LIKSA'),
+    ('kurs', 'KUSH'),
     ('flicka', 'FLIKA')
 ]
 
@@ -61,18 +64,21 @@ soundex_finnish_params = [
 ]
 
 soundex_sweden_params = [
-    ('kött', 'ZO5'),
-    ('sju', 'ZI'),
-    ('djur', 'JI8'),
-    ('clown', 'K6Ä27'),
-    ('lycklig', 'LI46O'),
-    ('dålig', 'DÄ6O'),
-    ('barn', 'BÄ7'),
-    ('skina', 'ZO7Ä'),
-    ('hjälm', 'JÄ67'),
-    ('skola', 'S4Ä6Ä'),
-    ('genom', 'JO7Ä7'),
-    ('flicka', 'F6O4Ä')
+    ('kött', 'ZI5'),
+    ('sju', 'ZU'),
+    ('djur', 'JU8'),
+    ('clown', 'K6O27'),
+    ('lycklig', 'LU46I'),
+    ('dålig', 'DO6I'),
+    ('barn', 'BO7'),
+    ('skina', 'ZI7O'),
+    ('hjälm', 'JI67'),
+    ('skola', 'S4O6O'),
+    ('skjorta', 'ZO5O'),
+    ('genom', 'JI7O7'),
+    ('läxa', 'LI43O'),
+    ('kurs', 'KU3'),
+    ('flicka', 'F6I4O')
 ]
 
 

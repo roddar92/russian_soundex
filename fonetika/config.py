@@ -31,20 +31,20 @@ RU_PHONEMES = {
 }
 
 SE_PHONEMES = {
+    re.compile(r'(rs|sch|ssj|stj|skj|sj|ch)', re.I): 'sh',
+    re.compile(r'(sk)([eiyöäj])', re.I): r'sh\2',
+    re.compile(r'(k)([eiyöäj])', re.I): r'sh\2',
     re.compile(r'(c)([eiy])', re.I): r's\2',
-    re.compile(r'([cq]|ck)', re.I): 'k',
+    re.compile(r'(g)([eiyöäj])', re.I): r'j\2',
     re.compile(r'([dghl])(j)', re.I): r'\2',
+    re.compile(r'(r)([ntl])', re.I): r'\2',
+    re.compile(r'(i)(g)($)', re.I): r'\1\3',
+    re.compile(r'([cq]|ck)', re.I): 'k',
+    re.compile(r'[st]ion', re.I): 'shn',
     re.compile(r'w', re.I): 'v',
     re.compile(r'x', re.I): 'ks',
     re.compile(r'z', re.I): 's',
-    re.compile(r'(sk)([eiyöäj])', re.I): r'sh\2',
-    re.compile(r'(k)([eiyöäj])', re.I): r'sh\2',
-    re.compile(r'tj', re.I): 'sh',
-    re.compile(r'(r)([ntl])', re.I): r'\2',
-    re.compile(r'(i)(g)($)', re.I): r'\1\3',
-    re.compile(r'(rs|sch|ssj|stj|skj|sj|ch)', re.I): 'sh',
-    re.compile(r'[st]ion', re.I): 'shn',
-    re.compile(r'(g)([eiyöäj])', re.I): r'j\2'
+    re.compile(r'tj', re.I): 'sh'
 }
 
 RU_REPLACEMENT_VOWEL_MAP = {
