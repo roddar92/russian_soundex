@@ -93,7 +93,7 @@ class FinnishMetaphone(Metaphone):
     _vowels = FI_VOWELS
     _deaf_consonants_seq = FI_DEAF_CONSONANTS
     _deaf_consonants = str.maketrans(_deaf_consonants_seq, 'pftk')
-    _vowels_table = str.maketrans(FI_VOWELS, 'ÄÄÄOOOII')
+    _vowels_table = str.maketrans(FI_VOWELS, 'AAAIIIUU')
 
     __z_replacement = re.compile(r'z', re.I)
     __q_replacement = re.compile(r'q', re.I)
@@ -115,7 +115,7 @@ class EstonianMetaphone(Metaphone):
     _vowels = EE_VOWELS
     _deaf_consonants_seq = EE_DEAF_CONSONANTS
     _deaf_consonants = str.maketrans(_deaf_consonants_seq, 'pftk')
-    _vowels_table = str.maketrans(EE_VOWELS, 'ÄÄÄOOOOII')
+    _vowels_table = str.maketrans(EE_VOWELS, 'AAAIIIIUU')
 
     __cz_replacement = re.compile(r'[cz]', re.I)
     __q_replacement = re.compile(r'q', re.I)
