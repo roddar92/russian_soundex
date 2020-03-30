@@ -39,6 +39,7 @@ SE_PHONEMES = {
     re.compile(r'([dghl])(j)', re.I): r'\2',
     re.compile(r'(r)([ntl])', re.I): r'\2',
     re.compile(r'(i)(g)($)', re.I): r'\1\3',
+    re.compile(r'(n)(g)', re.I): r'\1',
     re.compile(r'([cq]|ck)', re.I): 'k',
     re.compile(r'[st]ion', re.I): 'shn',
     re.compile(r'w', re.I): 'v',

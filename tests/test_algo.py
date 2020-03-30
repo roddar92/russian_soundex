@@ -33,6 +33,8 @@ metaphone_sweden_params = [
     ('genom', 'JINAM'),
     ('läxa', 'LIKSA'),
     ('kurs', 'KUSH'),
+    ('ganska', 'GANSKA'),
+    ('klänning', 'KLININ'),
     ('flicka', 'FLIKA')
 ]
 
