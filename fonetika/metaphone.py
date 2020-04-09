@@ -142,7 +142,7 @@ class SwedenMetaphone(Metaphone):
     _vowels = SE_VOWELS
     _deaf_consonants_seq = SE_DEAF_CONSONANTS
     _deaf_consonants = str.maketrans(_deaf_consonants_seq, 'pftk')
-    _vowels_table = str.maketrans(SE_VOWELS, 'AAAIIIIUU')
+    _vowels_table = str.maketrans(SE_VOWELS, 'AAIIIIIUU')
 
     _replacement_phoneme_map = SE_PHONEMES
 

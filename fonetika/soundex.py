@@ -145,7 +145,7 @@ class SwedenSoundex(Soundex):
     Soundex for Sweden language
     """
     _vowels = SE_VOWELS
-    _vowels_table = str.maketrans(_vowels, 'AAABBBBCC')
+    _vowels_table = str.maketrans(_vowels, 'AABBBBBCC')
     _table = str.maketrans('bpfvcszkgqdtlmnrj', '11223334445567789')
 
     _replacement_map = SE_PHONEMES

@@ -2,7 +2,7 @@ import re
 
 EN_VOWELS = 'aoeiyu'
 EE_VOWELS = 'aäoeöõiüu'
-SE_VOWELS = 'aoåäeöiuy'
+SE_VOWELS = 'aåäeöiyou'
 FI_VOWELS = 'aäoeöiyu'
 RU_VOWELS = 'аяоыиеёэюу'
 
