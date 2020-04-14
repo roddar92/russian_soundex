@@ -150,6 +150,8 @@ class SwedenMetaphone(Metaphone):
         return self._reduce_deaf_consonants_letters(word, self._vowels + 'lmnr')
 
     def transform(self, word):
+        if word.endswith('on') and not word.endswith('hon'):
+            word = word[:-2] + 'ån'
         for replace, result in self._replacement_phoneme_map.items():
             word = replace.sub(result, word)
         return self._apply_metaphone_algorithm(word)

@@ -151,6 +151,8 @@ class SwedenSoundex(Soundex):
     _replacement_map = SE_PHONEMES
 
     def transform(self, word):
+        if word.endswith('on') and not word.endswith('hon'):
+            word = word[:-2] + 'ån'
         for replace, result in self._replacement_map.items():
             word = replace.sub(result, word)
         word = word.replace('sh', 'z')

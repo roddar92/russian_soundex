@@ -38,6 +38,8 @@ metaphone_sweden_params = [
     ('klänning', 'KLININ'),
     ('stjärna', 'SHINA'),
     ('hus', 'HUS'),
+    ('hon', 'HUN'),
+    ('son', 'SAN'),
     ('flicka', 'FLIKA')
 ]
 
