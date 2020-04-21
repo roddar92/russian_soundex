@@ -156,6 +156,7 @@ class SwedenSoundex(Soundex):
         for replace, result in self._replacement_map.items():
             word = replace.sub(result, word)
         word = word.replace('sh', 'z')
+        word = word.replace('hf', 'x')
         return self._apply_soundex_algorithm(word)
 
 

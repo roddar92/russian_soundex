@@ -31,7 +31,8 @@ RU_PHONEMES = {
 }
 
 SE_PHONEMES = {
-    re.compile(r'(rs|sch|ssj|stj|skj|sj|ch)', re.I): 'sh',
+    re.compile(r'(rs|sch|ssj)', re.I): 'sh',
+    re.compile(r'(stj|skj|sj|ch)', re.I): 'hf',
     re.compile(r'(sk)([eiyöäj])', re.I): r'sh\2',
     re.compile(r'(k)([eiyöäj])', re.I): r'sh\2',
     re.compile(r'(c)([eiyöä])', re.I): r's\2',
