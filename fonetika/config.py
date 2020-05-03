@@ -12,6 +12,8 @@ FI_DEAF_CONSONANTS = 'bvdg'
 SE_DEAF_CONSONANTS = 'bvdg'
 RU_DEAF_CONSONANTS = 'бздвг'
 
+SE_VOWL = 'eiyöäj'
+
 J_VOWEL_SEQ_RU = r'^|ъ|ь|' + r'|'.join(RU_VOWELS)
 
 RU_PHONEMES = {
@@ -31,12 +33,13 @@ RU_PHONEMES = {
 }
 
 SE_PHONEMES = {
+    re.compile(r'^och$', re.I): 'å',
     re.compile(r'(rs|sch|ssj)', re.I): 'sh',
     re.compile(r'(stj|skj|sj|ch)', re.I): 'hf',
-    re.compile(r'(sk)([eiyöäj])', re.I): r'sh\2',
-    re.compile(r'(k)([eiyöäj])', re.I): r'sh\2',
-    re.compile(r'(c)([eiyöä])', re.I): r's\2',
-    re.compile(r'(g)([eiyöäj])', re.I): r'j\2',
+    re.compile(rf'(sk)([{SE_VOWL}])', re.I): r'sh\2',
+    re.compile(rf'(k)([{SE_VOWL}])', re.I): r'sh\2',
+    re.compile(rf'(c)([{SE_VOWL}])', re.I): r's\2',
+    re.compile(rf'(g)([{SE_VOWL}])', re.I): r'j\2',
     re.compile(r'([dghl])(j)', re.I): r'\2',
     re.compile(r'(r)([ntl])', re.I): r'\2',
     re.compile(r'(i)(g)($)', re.I): r'\1\3',

@@ -21,6 +21,7 @@ metaphone_finnish_params = [
 metaphone_sweden_params = [
     ('kött', 'SHIT'),
     ('sju', 'HFU'),
+    ('och', 'A'),
     ('djur', 'JUR'),
     ('clown', 'KLUVN'),
     ('lycklig', 'LIKLI'),
@@ -73,6 +74,7 @@ soundex_finnish_params = [
 soundex_sweden_params = [
     ('kött', 'ZB5'),
     ('sju', 'XC'),
+    ('och', 'Å'),
     ('djur', 'JC8'),
     ('clown', 'K6C27'),
     ('lycklig', 'LB46B'),
