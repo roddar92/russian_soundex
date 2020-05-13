@@ -25,7 +25,7 @@ soundex.transform('ёлочка')
 
 J070530
 
-soundex = Soundex(delete_first_letter=True, code_vowels=True)
+soundex = RussianSoundex(delete_first_letter=True, code_vowels=True)
 soundex.transform('ёлочка')
 ...
 
