@@ -174,6 +174,8 @@ class RussianSoundex(Soundex):
     })
     _replacement_map.update(RU_PHONEMES)
 
+    SPEC_ENDING_POSTAGS = {'ADJF', 'NUMB', 'NPRO'}
+
     def __init__(self, delete_first_letter=False, delete_first_coded_letter=False,
                  delete_zeros=False, cut_result=False, seq_cutted_len=4,
                  code_vowels=False, reduce_phonemes=True, use_morph_analysis=False):
@@ -201,7 +203,7 @@ class RussianSoundex(Soundex):
 
     def _use_morph_for_phoneme_replace(self, word):
         parse = self._moprh.parse(word)
-        if parse and ('ADJF' in parse[0].tag or 'NUMB' in parse[0].tag or 'NPRO' in parse[0].tag):
+        if parse and any(pos_tag in parse[0].tag for pos_tag in self.SPEC_ENDING_POSTAGS):
             word = self._replace_ego_ogo_endings(word)
         return word
 
