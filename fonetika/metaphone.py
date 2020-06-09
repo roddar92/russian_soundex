@@ -2,7 +2,7 @@ import re
 
 from .base.base import BasePhoneticsAlgorithm
 from .config import RU_PHONEMES, FI_VOWELS, RU_VOWELS, EE_VOWELS, \
-    RU_REPLACEMENT_VOWEL_MAP, RU_DEAF_CONSONANTS, FI_DEAF_CONSONANTS, EE_DEAF_CONSONANTS, SE_VOWELS, SE_DEAF_CONSONANTS, \
+    RU_REPLACEMENT_VOWEL_MAP, RU_DEAF_CONSONANTS, EE_FI_DEAF_CONSONANTS, SE_VOWELS, SE_DEAF_CONSONANTS, \
     SE_PHONEMES
 
 
@@ -91,7 +91,7 @@ class RussianMetaphone(Metaphone):
 
 class FinnishMetaphone(Metaphone):
     _vowels = FI_VOWELS
-    _deaf_consonants_seq = FI_DEAF_CONSONANTS
+    _deaf_consonants_seq = EE_FI_DEAF_CONSONANTS
     _deaf_consonants = str.maketrans(_deaf_consonants_seq, 'pftk')
     _vowels_table = str.maketrans(FI_VOWELS, 'AAAIIIUU')
 
@@ -113,7 +113,7 @@ class FinnishMetaphone(Metaphone):
 
 class EstonianMetaphone(Metaphone):
     _vowels = EE_VOWELS
-    _deaf_consonants_seq = EE_DEAF_CONSONANTS
+    _deaf_consonants_seq = EE_FI_DEAF_CONSONANTS
     _deaf_consonants = str.maketrans(_deaf_consonants_seq, 'pftk')
     _vowels_table = str.maketrans(EE_VOWELS, 'AAAIIIIUU')
 

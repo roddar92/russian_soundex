@@ -7,8 +7,7 @@ FI_VOWELS = 'aäoeöiyu'
 RU_VOWELS = 'аяоыиеёэюу'
 
 
-EE_DEAF_CONSONANTS = 'bvdg'
-FI_DEAF_CONSONANTS = 'bvdg'
+EE_FI_DEAF_CONSONANTS = 'bvdg'
 SE_DEAF_CONSONANTS = 'bvdg'
 RU_DEAF_CONSONANTS = 'бздвг'
 
