@@ -110,6 +110,7 @@ class FinnishSoundex(Soundex):
     """
     Soundex for Finnish language
     """
+    __sh_replacement = re.compile(r'sh', re.I)
     __ng_replacement = re.compile(r'ng', re.I)
     __z_replacement = re.compile(r'z', re.I)
     __q_replacement = re.compile(r'q', re.I)
@@ -121,6 +122,7 @@ class FinnishSoundex(Soundex):
     _table = str.maketrans('bpfvcszkgqdtlmnrj', '11223334445567789')
 
     def transform(self, word):
+        word = self.__sh_replacement.sub('s', word)
         word = self.__ng_replacement.sub('n', word)
         word = self.__z_replacement.sub('ts', word)
         word = self.__q_replacement.sub('kv', word)

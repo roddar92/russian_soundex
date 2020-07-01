@@ -16,6 +16,7 @@ metaphone_params = [
 
 metaphone_finnish_params = [
     ('rungot', 'RUNAT'),
+    ('shamaani', 'SAMANI'),
     ('yö', 'UI')
 ]
 
@@ -70,6 +71,7 @@ soundex_params = [
 
 soundex_finnish_params = [
     ('rungot', 'RC7A5'),
+    ('shamaani', 'SA7A7B'),
     ('yö', 'YB')
 ]
 

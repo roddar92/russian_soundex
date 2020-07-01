@@ -95,6 +95,7 @@ class FinnishMetaphone(Metaphone):
     _deaf_consonants = str.maketrans(_deaf_consonants_seq, 'pftk')
     _vowels_table = str.maketrans(FI_VOWELS, 'AAAIIIUU')
 
+    __sh_replacement = re.compile(r'sh', re.I)
     __ng_replacement = re.compile(r'ng', re.I)
     __z_replacement = re.compile(r'z', re.I)
     __q_replacement = re.compile(r'q', re.I)
@@ -105,6 +106,7 @@ class FinnishMetaphone(Metaphone):
         return self._reduce_deaf_consonants_letters(word, self._vowels + 'lmnr')
 
     def transform(self, word):
+        word = self.__sh_replacement.sub('s', word)
         word = self.__ng_replacement.sub('n', word)
         word = self.__z_replacement.sub('ts', word)
         word = self.__q_replacement.sub('kv', word)
