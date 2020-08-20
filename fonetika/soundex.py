@@ -7,7 +7,9 @@ from .config import RU_PHONEMES, RU_VOWELS, EN_VOWELS, FI_VOWELS, EE_VOWELS, RU_
 
 
 class Soundex(BasePhoneticsAlgorithm):
-
+    """
+    Basic class for Soundex algorithm
+    """
     _table, _vowels_table = str.maketrans('', ''), str.maketrans('', '')
     _vowels_regex = re.compile(r'(0+)', re.I)
 
@@ -152,16 +154,16 @@ class SwedenSoundex(Soundex):
     """
     Soundex for Sweden language
     """
+    __replacement_map = SE_PHONEMES
+
     _vowels = SE_VOWELS
     _vowels_table = str.maketrans(_vowels, 'AABBBBBCC')
     _table = str.maketrans('bpfvcszkgqdtlmnrj', '11223334445567789')
 
-    _replacement_map = SE_PHONEMES
-
     def transform(self, word):
         if word.endswith('on') and not word.endswith('hon'):
             word = word[:-2] + 'ån'
-        for replace, result in self._replacement_map.items():
+        for replace, result in self.__replacement_map.items():
             word = replace.sub(result, word)
         word = word.replace('sh', 'z')
         word = word.replace('hf', 'x')
@@ -169,18 +171,22 @@ class SwedenSoundex(Soundex):
 
 
 class RussianSoundex(Soundex):
-    _vowels = RU_VOWELS
-    _vowels_table = str.maketrans(_vowels, 'AAAABBBBCC')
-    _table = str.maketrans('бпвфгкхдтжшчщзсцлмнр', '11223334455556667889')
-    _ego_ogo_endings = re.compile(r'([ео])(г)(о$)', re.I)
+    """
+    Soundex for Russian language
+    """
+    __ego_ogo_endings = re.compile(r'([ео])(г)(о$)', re.I)
     __ia_ending = re.compile(r'[еи][ая]', re.I)
     __ii_ending = re.compile(r'и[еио]', re.I)
 
-    _replacement_map = RU_REPLACEMENT_VOWEL_MAP
-    _replacement_map.update({
+    __replacement_map = RU_REPLACEMENT_VOWEL_MAP
+    __replacement_map.update({
         re.compile(r'й', re.I): 'j'
     })
-    _replacement_map.update(RU_PHONEMES)
+    __replacement_map.update(RU_PHONEMES)
+
+    _vowels = RU_VOWELS
+    _vowels_table = str.maketrans(_vowels, 'AAAABBBBCC')
+    _table = str.maketrans('бпвфгкхдтжшчщзсцлмнр', '11223334455556667889')
 
     SPEC_ENDING_POSTAGS = {'ADJF', 'NUMB', 'NPRO'}
 
@@ -204,15 +210,15 @@ class RussianSoundex(Soundex):
 
         self.reduce_phonemes = reduce_phonemes
         self.use_morph_analysis = use_morph_analysis
-        self._moprh = pymorphy2.MorphAnalyzer()
+        self.__moprh = pymorphy2.MorphAnalyzer()
 
-    def _replace_ego_ogo_endings(self, word):
-        return self._ego_ogo_endings.sub(r'\1в\3', word)
+    def __replace_ego_ogo_endings(self, word):
+        return self.__ego_ogo_endings.sub(r'\1в\3', word)
 
-    def _use_morph_for_phoneme_replace(self, word):
-        parse = self._moprh.parse(word)
+    def __use_morph_for_phoneme_replace(self, word):
+        parse = self.__moprh.parse(word)
         if parse and any(pos_tag in parse[0].tag for pos_tag in self.SPEC_ENDING_POSTAGS):
-            word = self._replace_ego_ogo_endings(word)
+            word = self.__replace_ego_ogo_endings(word)
         return word
 
     def _replace_vowels_seq(self, word):
@@ -221,7 +227,7 @@ class RussianSoundex(Soundex):
         return word
 
     def _reduce_phonemes(self, word):
-        for replace, result in self._replacement_map.items():
+        for replace, result in self.__replacement_map.items():
             word = replace.sub(result, word)
         return word
 
@@ -232,7 +238,7 @@ class RussianSoundex(Soundex):
         :return: Soundex string code
         """
         if self.use_morph_analysis:
-            word = self._use_morph_for_phoneme_replace(word)
+            word = self.__use_morph_for_phoneme_replace(word)
         if self.reduce_phonemes:
             word = self._reduce_phonemes(word)
         if self._code_vowels:
