@@ -89,6 +89,7 @@ class RussianMetaphone(Metaphone):
         return self._reduce_deaf_consonants_letters(word, self._vowels + 'лмнр')
 
     def transform(self, word):
+        word = self._latin2cyrillic(word)
         if self.reduce_phonemes:
             word = self._reduce_phonemes(word)
         word = self.__replace_j_vowels(word)

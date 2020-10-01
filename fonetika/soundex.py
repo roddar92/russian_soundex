@@ -237,6 +237,7 @@ class RussianSoundex(Soundex):
         :param word: string
         :return: Soundex string code
         """
+        word = self._latin2cyrillic(word)
         if self.use_morph_analysis:
             word = self.__use_morph_for_phoneme_replace(word)
         if self.reduce_phonemes:
