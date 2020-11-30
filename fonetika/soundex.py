@@ -102,6 +102,7 @@ class EnglishSoundex(Soundex):
         return word
 
     def transform(self, word):
+        word = self._cyrillic2latin(word)
         word = self.__hw_replacement.sub('', word)
         if self._code_vowels:
             word = self._replace_vowels_seq(word)
@@ -124,6 +125,7 @@ class FinnishSoundex(Soundex):
     _table = str.maketrans('bpfvcszkgqdtlmnrj', '11223334445567789')
 
     def transform(self, word):
+        word = self._cyrillic2latin(word)
         word = self.__sh_replacement.sub('s', word)
         word = self.__ng_replacement.sub('n', word)
         word = self.__z_replacement.sub('ts', word)
@@ -145,6 +147,7 @@ class EstonianSoundex(Soundex):
     _table = str.maketrans('bpfvcszkgqdtlmnrj', '11223334445567789')
 
     def transform(self, word):
+        word = self._cyrillic2latin(word)
         word = self.__z_replacement.sub('ts', word)
         word = self.__x_replacement.sub('ks', word)
         return self._apply_soundex_algorithm(word)
@@ -161,6 +164,7 @@ class SwedenSoundex(Soundex):
     _table = str.maketrans('bpfvcszkgqdtlmnrj', '11223334445567789')
 
     def transform(self, word):
+        word = self._cyrillic2latin(word)
         if word.endswith('on') and not word.endswith('hon'):
             word = word[:-2] + 'ån'
         for replace, result in self.__replacement_map.items():

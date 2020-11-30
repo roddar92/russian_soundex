@@ -116,6 +116,7 @@ class FinnishMetaphone(Metaphone):
         return self._reduce_deaf_consonants_letters(word, self._vowels + 'lmnr')
 
     def transform(self, word):
+        word = self._cyrillic2latin(word)
         word = self.__sh_replacement.sub('s', word)
         word = self.__ng_replacement.sub('n', word)
         word = self.__z_replacement.sub('ts', word)
@@ -144,6 +145,7 @@ class EstonianMetaphone(Metaphone):
         return self._reduce_deaf_consonants_letters(word, self._vowels + 'lmnr')
 
     def transform(self, word):
+        word = self._cyrillic2latin(word)
         word = self.__cz_replacement.sub('ts', word)
         word = self.__q_replacement.sub('kv', word)
         word = self.__w_replacement.sub('v', word)
@@ -167,6 +169,7 @@ class SwedenMetaphone(Metaphone):
         return self._reduce_deaf_consonants_letters(word, self._vowels + 'lmnr')
 
     def transform(self, word):
+        word = self._cyrillic2latin(word)
         if word.endswith('on') and not word.endswith('hon'):
             word = word[:-2] + 'ån'
         for replace, result in self.__replacement_phoneme_map.items():
