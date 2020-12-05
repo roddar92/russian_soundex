@@ -21,6 +21,13 @@ metaphone_finnish_params = [
     ('yö', 'UI')
 ]
 
+non_reduced_metaphone_finnish_params = [
+    ('tuuli', 'TUULI'),
+    ('tuli', 'TULI'),
+    ('shamaani', 'SAMAANI'),
+    ('maalaatte', 'MAALAATTI')
+]
+
 metaphone_sweden_params = [
     ('kött', 'SHIT'),
     ('sju', 'HFU'),
@@ -77,6 +84,13 @@ soundex_finnish_params = [
     ('yö', 'YB')
 ]
 
+non_reduced_soundex_finnish_params = [
+    ('tuuli', 'TCC6B'),
+    ('tuli', 'TC6B'),
+    ('shamaani', 'SA7AA7B'),
+    ('maalaatte', 'MAA6AA55B')
+]
+
 soundex_sweden_params = [
     ('kött', 'ZB5'),
     ('sju', 'XC'),
@@ -109,6 +123,12 @@ def test_finnish_metaphone():
         assert metaphone.transform(data) == expected
 
 
+def test_non_reduce_finnish_metaphone():
+    metaphone = FinnishMetaphone(reduce_word=False)
+    for data, expected in non_reduced_metaphone_finnish_params:
+        assert metaphone.transform(data) == expected
+
+
 def test_sweden_metaphone():
     metaphone = SwedenMetaphone()
     for data, expected in metaphone_sweden_params:
@@ -130,6 +150,12 @@ def test_soundex_without_vowels():
 def test_finnish_soundex():
     soundex = FinnishSoundex(delete_first_coded_letter=True, code_vowels=True)
     for data, expected in soundex_finnish_params:
+        assert soundex.transform(data) == expected
+
+
+def test_non_reduced_finnish_soundex():
+    soundex = FinnishSoundex(delete_first_coded_letter=True, code_vowels=True, reduce_word=False)
+    for data, expected in non_reduced_soundex_finnish_params:
         assert soundex.transform(data) == expected
 
 

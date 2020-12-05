@@ -13,12 +13,13 @@ class Soundex(BasePhoneticsAlgorithm):
     _table, _vowels_table = str.maketrans('', ''), str.maketrans('', '')
     _vowels_regex = re.compile(r'(0+)', re.I)
 
-    def __init__(self, delete_first_letter=False, delete_first_coded_letter=False,
+    def __init__(self, delete_first_letter=False, delete_first_coded_letter=False, reduce_word=True,
                  delete_zeros=False, code_vowels=False, cut_result=False, seq_cutted_len=4):
         """
         Initialization of Soundex object
         :param delete_first_letter: remove the first letter from the result code (A169 -> 169)
         :param delete_first_coded_letter: remove the first coded letter from the result code (A0169 -> A169)
+        :param reduce_word: reduce repeated characters (A00169 -> A0169)
         :param delete_zeros: remove vowels from the result code
         :param code_vowels: group and code vowels as ABC letters
         :param cut_result: cut result core till N symbols
@@ -26,6 +27,7 @@ class Soundex(BasePhoneticsAlgorithm):
         """
         self.__delete_first_letter = delete_first_letter
         self.__delete_first_coded_letter = delete_first_coded_letter
+        self.__reduce_word = reduce_word
         self.__delete_zeros = delete_zeros
         self._code_vowels = code_vowels
         self.__cut_result = cut_result
@@ -50,7 +52,8 @@ class Soundex(BasePhoneticsAlgorithm):
         first, last = word[0], word
         last = last.translate(self._table)
         last = self.__translate_vowels(last)
-        last = self._reduce_seq(last)
+        if self.__reduce_word:
+            last = self._reduce_seq(last)
         if self.__delete_zeros:
             last = self.__remove_vowels_and_paired_sounds(last)
         if self.__cut_result:
@@ -194,13 +197,14 @@ class RussianSoundex(Soundex):
 
     SPEC_ENDING_POSTAGS = {'ADJF', 'NUMB', 'NPRO'}
 
-    def __init__(self, delete_first_letter=False, delete_first_coded_letter=False,
+    def __init__(self, delete_first_letter=False, delete_first_coded_letter=False, reduce_word=True,
                  delete_zeros=False, cut_result=False, seq_cutted_len=4,
                  code_vowels=False, reduce_phonemes=True, use_morph_analysis=False):
         """
         Initialization of Russian Soundex object
         :param delete_first_letter:
         :param delete_first_coded_letter:
+        :param reduce_word:
         :param delete_zeros:
         :param code_vowels:
         :param cut_result:
@@ -209,7 +213,7 @@ class RussianSoundex(Soundex):
         :param code_vowels: group and code vowels as ABC letters
         :param reduce_phonemes: simplify sequences of Russian consonants
         """
-        super(RussianSoundex, self).__init__(delete_first_letter, delete_first_coded_letter,
+        super(RussianSoundex, self).__init__(delete_first_letter, delete_first_coded_letter, reduce_word,
                                              delete_zeros, code_vowels, cut_result, seq_cutted_len)
 
         self.reduce_phonemes = reduce_phonemes
