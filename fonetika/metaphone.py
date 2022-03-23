@@ -2,8 +2,8 @@ import re
 
 from .base.base import BasePhoneticsAlgorithm
 from .config import RU_PHONEMES, FI_VOWELS, RU_VOWELS, EE_VOWELS, \
-    RU_REPLACEMENT_VOWEL_MAP, RU_DEAF_CONSONANTS, EE_FI_DEAF_CONSONANTS, SE_VOWELS, SE_DEAF_CONSONANTS, \
-    SE_PHONEMES
+    RU_REMOVE_MAP, RU_REPLACEMENT_J_MAP, RU_REPLACEMENT_VOWEL_MAP, RU_DEAF_CONSONANTS, \
+    EE_FI_DEAF_CONSONANTS, SE_VOWELS, SE_DEAF_CONSONANTS, SE_PHONEMES
 
 
 class Metaphone(BasePhoneticsAlgorithm):
@@ -56,10 +56,9 @@ class RussianMetaphone(Metaphone):
     """
     __j_vowel_regex = re.compile(r'[ий][ео]', re.I)
 
+    __replacement_j_map = RU_REPLACEMENT_J_MAP
     __replacement_vowel_map = RU_REPLACEMENT_VOWEL_MAP
-    __replacement_vowel_map.update({
-        re.compile(r'[ъь]', re.I): ''
-    })
+    __remove_map = RU_REMOVE_MAP
 
     __replacement_phoneme_map = RU_PHONEMES
 
@@ -73,7 +72,11 @@ class RussianMetaphone(Metaphone):
         self.reduce_phonemes = reduce_phonemes
 
     def __replace_j_vowels(self, word):
+        for replace, result in self.__replacement_j_map.items():
+            word = replace.sub(result, word)
         for replace, result in self.__replacement_vowel_map.items():
+            word = replace.sub(result, word)
+        for replace, result in self.__remove_map.items():
             word = replace.sub(result, word)
         return self.__j_vowel_regex.sub('и', word)
 

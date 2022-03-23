@@ -13,7 +13,8 @@ RU_DEAF_CONSONANTS = 'бздвг'
 
 SE_VOWL = 'eiyöäj'
 
-J_VOWEL_SEQ_RU = r'^|ъ|ь|' + r'|'.join(RU_VOWELS)
+J_SEQ_RU = r'^|ъ|ь'
+J_VOWEL_SEQ_RU = r'|'.join(RU_VOWELS)
 
 RU_PHONEMES = {
     re.compile(r'(с?т|с)ч', re.I): r'щ',
@@ -51,9 +52,21 @@ SE_PHONEMES = {
     re.compile(r'tj', re.I): 'sh'
 }
 
+RU_REPLACEMENT_J_MAP = {
+    re.compile(r'(' + J_SEQ_RU + r')(я)', re.I): 'jа',
+    re.compile(r'(' + J_SEQ_RU + r')(ю)', re.I): 'jу',
+    re.compile(r'(' + J_SEQ_RU + r')(е)', re.I): 'jэ',
+    re.compile(r'(' + J_SEQ_RU + r')(ё)', re.I): 'jо'
+}
+
 RU_REPLACEMENT_VOWEL_MAP = {
-    re.compile(r'(' + J_VOWEL_SEQ_RU + r')(я)', re.I): 'jа',
-    re.compile(r'(' + J_VOWEL_SEQ_RU + r')(ю)', re.I): 'jу',
-    re.compile(r'(' + J_VOWEL_SEQ_RU + r')(е)', re.I): 'jэ',
-    re.compile(r'(' + J_VOWEL_SEQ_RU + r')(ё)', re.I): 'jо'
+    re.compile(r'(' + J_VOWEL_SEQ_RU + r')(я)', re.I): r'\1jа',
+    re.compile(r'(' + J_VOWEL_SEQ_RU + r')(ю)', re.I): r'\1jу',
+    re.compile(r'(' + J_VOWEL_SEQ_RU + r')(е)', re.I): r'\1jэ',
+    re.compile(r'(' + J_VOWEL_SEQ_RU + r')(ё)', re.I): r'\1jо'
+}
+
+RU_REMOVE_MAP = {
+    re.compile(r'й', re.I): 'j',
+    re.compile(r'[ъь]', re.I): ''
 }
