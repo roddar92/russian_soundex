@@ -198,7 +198,8 @@ class RussianSoundex(Soundex):
 
     def __init__(self, delete_first_letter=False, delete_first_coded_letter=False, reduce_word=True,
                  delete_zeros=False, cut_result=False, seq_cutted_len=4,
-                 code_vowels=False, reduce_phonemes=True, use_morph_analysis=False):
+                 code_vowels=False, reduce_phonemes=True,
+                 use_morph_analysis=False, replace_ogo_ending=False):
         """
         Initialization of Russian Soundex object
         :param delete_first_letter:
@@ -209,6 +210,7 @@ class RussianSoundex(Soundex):
         :param cut_result:
         :param seq_cutted_len:
         :param use_morph_analysis: use morphological grammems for phonemes analysis
+        :param replace_ogo_ending: replace г => и in -ого/-его ending
         :param code_vowels: group and code vowels as ABC letters
         :param reduce_phonemes: simplify sequences of Russian consonants
         """
@@ -217,14 +219,19 @@ class RussianSoundex(Soundex):
 
         self.reduce_phonemes = reduce_phonemes
         self.use_morph_analysis = use_morph_analysis
-        self.__moprh = pymorphy2.MorphAnalyzer()
+
+        if self.use_morph_analysis:
+            self.__moprh = pymorphy2.MorphAnalyzer()
+
+        self.replace_ogo_ending = replace_ogo_ending
 
     def __replace_ego_ogo_endings(self, word):
         return self.__ego_ogo_endings.sub(r'\1в\3', word)
 
     def __use_morph_for_phoneme_replace(self, word):
         parse = self.__moprh.parse(word)
-        if parse and any(pos_tag in parse[0].tag for pos_tag in self.SPEC_ENDING_POSTAGS):
+        if self.replace_ogo_ending or \
+                parse and any(pos_tag in parse[0].tag for pos_tag in self.SPEC_ENDING_POSTAGS):
             word = self.__replace_ego_ogo_endings(word)
         return word
 
@@ -249,7 +256,7 @@ class RussianSoundex(Soundex):
         :return: Soundex string code
         """
         word = self._latin2cyrillic(word)
-        if self.use_morph_analysis:
+        if self.replace_ogo_ending or self.use_morph_analysis:
             word = self.__use_morph_for_phoneme_replace(word)
         if self.reduce_phonemes:
             word = self._reduce_phonemes(word)
