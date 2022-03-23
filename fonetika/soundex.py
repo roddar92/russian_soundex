@@ -170,7 +170,7 @@ class SwedenSoundex(Soundex):
         word = self._cyrillic2latin(word)
         if word.endswith('on') and not word.endswith('hon'):
             word = word[:-2] + 'ån'
-        for replace, result in self.__replacement_map.items():
+        for replace, result in self.__replacement_map:
             word = replace.sub(result, word)
         word = word.replace('sh', 'z')
         word = word.replace('hf', 'x')
@@ -186,9 +186,9 @@ class RussianSoundex(Soundex):
     __ii_ending = re.compile(r'и[еио]', re.I)
 
     __replacement_j_map = RU_REPLACEMENT_J_MAP
-    __replacement_map = RU_REPLACEMENT_VOWEL_MAP
+    __replacement_vowel_map = RU_REPLACEMENT_VOWEL_MAP
     __remove_map = RU_REMOVE_MAP
-    __replacement_map.update(RU_PHONEMES)
+    __replacement_phoneme_map = RU_PHONEMES
 
     _vowels = RU_VOWELS
     _vowels_table = str.maketrans(_vowels, 'AAAABBBBCC')
@@ -198,8 +198,7 @@ class RussianSoundex(Soundex):
 
     def __init__(self, delete_first_letter=False, delete_first_coded_letter=False, reduce_word=True,
                  delete_zeros=False, cut_result=False, seq_cutted_len=4,
-                 code_vowels=False, reduce_phonemes=True,
-                 use_morph_analysis=False, replace_ogo_ending=False):
+                 code_vowels=False, reduce_phonemes=True, replace_ego_ogo_endings=False, use_morph_analysis=False):
         """
         Initialization of Russian Soundex object
         :param delete_first_letter:
@@ -209,31 +208,26 @@ class RussianSoundex(Soundex):
         :param code_vowels:
         :param cut_result:
         :param seq_cutted_len:
-        :param use_morph_analysis: use morphological grammems for phonemes analysis
-        :param replace_ogo_ending: replace г => и in -ого/-его ending
         :param code_vowels: group and code vowels as ABC letters
         :param reduce_phonemes: simplify sequences of Russian consonants
+        :param replace_ego_ogo_endings: replace "-его/-ого" endings with "-ево/-ово"
+        :param use_morph_analysis: use morphological analysis for "-его/-ого" replacement
         """
         super(RussianSoundex, self).__init__(delete_first_letter, delete_first_coded_letter, reduce_word,
                                              delete_zeros, code_vowels, cut_result, seq_cutted_len)
 
         self.reduce_phonemes = reduce_phonemes
         self.use_morph_analysis = use_morph_analysis
-
+        self.replace_ego_ogo_endings = True if self.use_morph_analysis else replace_ego_ogo_endings
         if self.use_morph_analysis:
             self.__moprh = pymorphy2.MorphAnalyzer()
 
-        self.replace_ogo_ending = replace_ogo_ending
-
     def __replace_ego_ogo_endings(self, word):
-        return self.__ego_ogo_endings.sub(r'\1в\3', word)
-
-    def __use_morph_for_phoneme_replace(self, word):
-        parse = self.__moprh.parse(word)
-        if self.replace_ogo_ending or \
-                parse and any(pos_tag in parse[0].tag for pos_tag in self.SPEC_ENDING_POSTAGS):
-            word = self.__replace_ego_ogo_endings(word)
-        return word
+        is_applicable = True
+        if self.use_morph_analysis:
+            parse = self.__moprh.parse(word)
+            is_applicable = parse and any(pos_tag in parse[0].tag for pos_tag in self.SPEC_ENDING_POSTAGS)
+        return self.__ego_ogo_endings.sub(r'\1в\3', word) if is_applicable else word
 
     def _replace_vowels_seq(self, word):
         word = self.__ii_ending.sub('и', word)
@@ -241,11 +235,14 @@ class RussianSoundex(Soundex):
         return word
 
     def _reduce_phonemes(self, word):
-        for replace, result in self.__replacement_j_map.items():
+        for replace, result in self.__replacement_j_map + \
+                               self.__replacement_vowel_map + \
+                               self.__replacement_phoneme_map:
             word = replace.sub(result, word)
-        for replace, result in self.__replacement_map.items():
-            word = replace.sub(result, word)
-        for replace, result in self.__remove_map.items():
+        return word
+
+    def _replace_j_and_signs(self, word):
+        for replace, result in self.__remove_map:
             word = replace.sub(result, word)
         return word
 
@@ -256,10 +253,11 @@ class RussianSoundex(Soundex):
         :return: Soundex string code
         """
         word = self._latin2cyrillic(word)
-        if self.replace_ogo_ending or self.use_morph_analysis:
-            word = self.__use_morph_for_phoneme_replace(word)
+        if self.replace_ego_ogo_endings:
+            word = self.__replace_ego_ogo_endings(word)
         if self.reduce_phonemes:
             word = self._reduce_phonemes(word)
         if self._code_vowels:
             word = self._replace_vowels_seq(word)
+        word = self._replace_j_and_signs(word)
         return self._apply_soundex_algorithm(word)

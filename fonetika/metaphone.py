@@ -72,16 +72,14 @@ class RussianMetaphone(Metaphone):
         self.reduce_phonemes = reduce_phonemes
 
     def __replace_j_vowels(self, word):
-        for replace, result in self.__replacement_j_map.items():
-            word = replace.sub(result, word)
-        for replace, result in self.__replacement_vowel_map.items():
-            word = replace.sub(result, word)
-        for replace, result in self.__remove_map.items():
+        for replace, result in self.__replacement_j_map + \
+                               self.__replacement_vowel_map + \
+                               self.__remove_map:
             word = replace.sub(result, word)
         return self.__j_vowel_regex.sub('и', word)
 
     def _reduce_phonemes(self, word):
-        for replace, result in self.__replacement_phoneme_map.items():
+        for replace, result in self.__replacement_phoneme_map:
             word = replace.sub(result, word)
         return word
 
@@ -175,6 +173,6 @@ class SwedenMetaphone(Metaphone):
         word = self._cyrillic2latin(word)
         if word.endswith('on') and not word.endswith('hon'):
             word = word[:-2] + 'ån'
-        for replace, result in self.__replacement_phoneme_map.items():
+        for replace, result in self.__replacement_phoneme_map:
             word = replace.sub(result, word)
         return self._apply_metaphone_algorithm(word)
