@@ -79,7 +79,18 @@ soundex_params = [
     ('финляндский', 'Ф08708630J'),
     ('щастье', 'Щ064J0'),
     ('счастье', 'Щ064J0'),
-    ('кoрован', 'К090208')
+    ('кoрован', 'К090208'),
+    ('голландцы', 'Г070860'),
+    ('заказчик', 'З030503'),
+    ('бухгалтер', 'Б0307409'),
+    ('жёстче', 'Ж050')
+]
+
+soundex_morph_params = [
+    ('красноярского', 'К390680J0963020'),
+    ('краснаярскава', 'К390680J0963020'),
+    ('одиннадцатого', 'О04080604020'),
+    ('одинацатаво', 'О04080604020')
 ]
 
 soundex_finnish_params = [
@@ -148,6 +159,12 @@ def test_soundex_with_vowels():
 def test_soundex_without_vowels():
     soundex = RussianSoundex(delete_first_coded_letter=True)
     for data, expected in soundex_params:
+        assert soundex.transform(data) == expected
+
+
+def test_soundex_with_morph_analysis():
+    soundex = RussianSoundex(use_morph_analysis=True)
+    for data, expected in soundex_morph_params:
         assert soundex.transform(data) == expected
 
 
