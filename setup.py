@@ -3,7 +3,7 @@ from os.path import join, dirname
 
 setup(
     name='fonetika',
-    version='1.4.3',
+    version='1.4.5',
     url='https://github.com/roddar92/russian_soundex',
     author='Daria Rodionova',
     author_email='drodionova86@gmail.com',

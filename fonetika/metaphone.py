@@ -1,9 +1,9 @@
 import re
 
 from .base.base import BasePhoneticsAlgorithm
-from .config import RU_PHONEMES, FI_VOWELS, RU_VOWELS, EE_VOWELS, \
-    RU_REMOVE_MAP, RU_REPLACEMENT_J_MAP, RU_REPLACEMENT_VOWEL_MAP, RU_DEAF_CONSONANTS, \
-    EE_FI_DEAF_CONSONANTS, SE_VOWELS, SE_DEAF_CONSONANTS, SE_PHONEMES
+from .config import FI_VOWELS, RU_VOWELS, EE_VOWELS, RU_DEAF_CONSONANTS, \
+    EE_FI_DEAF_CONSONANTS, SE_VOWELS, SE_DEAF_CONSONANTS
+from .ruleset import RussianRuleSet, SwedenRuleSet, FinnishRuleSet
 
 
 class Metaphone(BasePhoneticsAlgorithm):
@@ -54,13 +54,7 @@ class RussianMetaphone(Metaphone):
     """
     Metaphone for Russian language
     """
-    __j_vowel_regex = re.compile(r'[ий][ео]', re.I)
-
-    __replacement_j_map = RU_REPLACEMENT_J_MAP
-    __replacement_vowel_map = RU_REPLACEMENT_VOWEL_MAP
-    __remove_map = RU_REMOVE_MAP
-
-    __replacement_phoneme_map = RU_PHONEMES
+    __j_vowel_regex = re.compile(r'и[ео]', re.I)
 
     _vowels = RU_VOWELS
     _deaf_consonants_seq = RU_DEAF_CONSONANTS
@@ -70,18 +64,12 @@ class RussianMetaphone(Metaphone):
     def __init__(self, compress_ending=False, reduce_phonemes=False):
         super().__init__(compress_ending)
         self.reduce_phonemes = reduce_phonemes
+        self.rule_set = RussianRuleSet()
 
     def __replace_j_vowels(self, word):
-        for replace, result in self.__replacement_j_map + \
-                               self.__replacement_vowel_map + \
-                               self.__remove_map:
-            word = replace.sub(result, word)
+        word = self.rule_set.replace_j_vowel_phonemes(word)
+        word = self.rule_set.replace_j_and_signs(word)
         return self.__j_vowel_regex.sub('и', word)
-
-    def _reduce_phonemes(self, word):
-        for replace, result in self.__replacement_phoneme_map:
-            word = replace.sub(result, word)
-        return word
 
     def _compress_ending(self, word):
         return word
@@ -92,7 +80,7 @@ class RussianMetaphone(Metaphone):
     def transform(self, word):
         word = self._latin2cyrillic(word)
         if self.reduce_phonemes:
-            word = self._reduce_phonemes(word)
+            word = self.rule_set.reduce_phonemes(word)
         word = self.__replace_j_vowels(word)
         return self._apply_metaphone_algorithm(word)
 
@@ -101,12 +89,7 @@ class FinnishMetaphone(Metaphone):
     """
     Metaphone for Finnish language
     """
-    __sh_replacement = re.compile(r'sh', re.I)
-    __ng_replacement = re.compile(r'ng', re.I)
-    __z_replacement = re.compile(r'z', re.I)
-    __q_replacement = re.compile(r'q', re.I)
-    __w_replacement = re.compile(r'w', re.I)
-    __x_replacement = re.compile(r'x', re.I)
+    __rule_set = FinnishRuleSet()
 
     _vowels = FI_VOWELS
     _deaf_consonants_seq = EE_FI_DEAF_CONSONANTS
@@ -118,12 +101,7 @@ class FinnishMetaphone(Metaphone):
 
     def transform(self, word):
         word = self._cyrillic2latin(word)
-        word = self.__sh_replacement.sub('s', word)
-        word = self.__ng_replacement.sub('n', word)
-        word = self.__z_replacement.sub('ts', word)
-        word = self.__q_replacement.sub('kv', word)
-        word = self.__w_replacement.sub('v', word)
-        word = self.__x_replacement.sub('ks', word)
+        word = self.__rule_set.reduce_phonemes(word)
         return self._apply_metaphone_algorithm(word)
 
 
@@ -159,7 +137,7 @@ class SwedenMetaphone(Metaphone):
     """
     Metaphone for Sweden language
     """
-    __replacement_phoneme_map = SE_PHONEMES
+    __rule_set = SwedenRuleSet()
 
     _vowels = SE_VOWELS
     _deaf_consonants_seq = SE_DEAF_CONSONANTS
@@ -173,6 +151,5 @@ class SwedenMetaphone(Metaphone):
         word = self._cyrillic2latin(word)
         if word.endswith('on') and not word.endswith('hon'):
             word = word[:-2] + 'ån'
-        for replace, result in self.__replacement_phoneme_map:
-            word = replace.sub(result, word)
+        word = self.__rule_set.reduce_phonemes(word)
         return self._apply_metaphone_algorithm(word)

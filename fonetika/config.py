@@ -16,6 +16,29 @@ SE_VOWL = 'eiyöäj'
 J_SEQ_RU = r'^|ъ|ь'
 J_VOWEL_SEQ_RU = r'|'.join(RU_VOWELS)
 
+EN_REMOVE_MAP = [
+    (re.compile(r'[hw]', re.I), '')
+]
+
+EN_PHONEMES = [
+    (re.compile(r'^ye', re.I), 'je'),
+    (re.compile(r'au', re.I), 'o'),
+    (re.compile(r'e[ae]', re.I), 'e'),
+    (re.compile(r'(ew|ue|oo)', re.I), 'u'),
+    (re.compile(r'([ie]y|ai)', re.I), 'ei'),
+    (re.compile(r'([iy]e|[iy]re)$', re.I), 'ai'),
+    (re.compile(r'(e[ae]r|ere)$', re.I), 'ie')
+]
+
+FI_PHONEMES = [
+    (re.compile(r'sh', re.I), 's'),
+    (re.compile(r'ng', re.I), 'n'),
+    (re.compile(r'z', re.I), 'ts'),
+    (re.compile(r'q', re.I), 'kv'),
+    (re.compile(r'w', re.I), 'v'),
+    (re.compile(r'x', re.I), 'ks')
+]
+
 RU_PHONEMES = [
     (re.compile(r'(ст|[сзж])(ч)', re.I), r'щ'),  # Подписчик, заказчик, мужчина, жёстче.
     (re.compile(r'([сжт])(ш)', re.I), r'\2'),  # Обветшалый, выросший.

@@ -1,13 +1,13 @@
-from abc import abstractmethod
-
 import editdistance
+
+from abc import abstractmethod
 
 from .base.base import BasePhoneticsAlgorithm
 from .metaphone import Metaphone
 from .soundex import Soundex
 
 
-class PhoneticsException(Exception):
+class PhoneticDistanceException(Exception):
     def __init__(self, msg):
         self.msg = msg
 
@@ -16,7 +16,7 @@ class PhoneticsDistance:
     @staticmethod
     def _hamming(word1, word2):
         if len(word1) != len(word2):
-            raise PhoneticsException('For Hamming distance words should be the same length!')
+            raise PhoneticDistanceException('For Hamming distance words should be the same length!')
         return sum(a != b for a, b in zip(word1, word2))
 
     @staticmethod

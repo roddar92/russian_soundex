@@ -1,9 +1,10 @@
-import pymorphy2
 import re
 
+import pymorphy2
+
 from .base.base import BasePhoneticsAlgorithm
-from .config import RU_PHONEMES, RU_VOWELS, EN_VOWELS, FI_VOWELS, EE_VOWELS, \
-    RU_REMOVE_MAP, RU_REPLACEMENT_J_MAP, RU_REPLACEMENT_VOWEL_MAP, SE_VOWELS, SE_PHONEMES
+from .config import RU_VOWELS, EN_VOWELS, FI_VOWELS, EE_VOWELS, SE_VOWELS
+from .ruleset import EnglishRuleSet, FinnishRuleSet, RussianRuleSet, SwedenRuleSet
 
 
 class Soundex(BasePhoneticsAlgorithm):
@@ -81,32 +82,18 @@ class EnglishSoundex(Soundex):
     """
     This version may have differences from original Soundex for English (consonants was splitted in more groups)
     """
-    __hw_replacement = re.compile(r'[hw]', re.I)
-    __au_ending = re.compile(r'au', re.I)
-    __ea_ending = re.compile(r'e[ae]', re.I)
-    __oo_ue_ew_ending = re.compile(r'(ew|ue|oo)', re.I)
-    __iey_ending = re.compile(r'([ie]y|ai)', re.I)
-    __iye_ire_ending = re.compile(r'([iy]e|[iy]re)$', re.I)
-    __ye_ending = re.compile(r'^ye', re.I)
-    __ere_ending = re.compile(r'(e[ae]r|ere)$', re.I)
+    __rule_set = EnglishRuleSet()
 
     _vowels = EN_VOWELS
     _vowels_table = str.maketrans(_vowels, 'AABBBC')
     _table = str.maketrans('bpfvcksgjqxzdtlmnr', '112233344555667889')
 
     def _replace_vowels_seq(self, word):
-        word = self.__ye_ending.sub('je', word)
-        word = self.__au_ending.sub('o', word)
-        word = self.__ea_ending.sub('e', word)
-        word = self.__oo_ue_ew_ending.sub('u', word)
-        word = self.__iey_ending.sub('ei', word)
-        word = self.__iye_ire_ending.sub('ai', word)
-        word = self.__ere_ending.sub('ie', word)
-        return word
+        return self.__rule_set.reduce_phonemes(word)
 
     def transform(self, word):
         word = self._cyrillic2latin(word)
-        word = self.__hw_replacement.sub('', word)
+        word = self.__rule_set.remove_empty_sounds(word)
         if self._code_vowels:
             word = self._replace_vowels_seq(word)
         return self._apply_soundex_algorithm(word)
@@ -116,12 +103,7 @@ class FinnishSoundex(Soundex):
     """
     Soundex for Finnish language
     """
-    __sh_replacement = re.compile(r'sh', re.I)
-    __ng_replacement = re.compile(r'ng', re.I)
-    __z_replacement = re.compile(r'z', re.I)
-    __q_replacement = re.compile(r'q', re.I)
-    __w_replacement = re.compile(r'w', re.I)
-    __x_replacement = re.compile(r'x', re.I)
+    __rule_set = FinnishRuleSet()
 
     _vowels = FI_VOWELS
     _vowels_table = str.maketrans(_vowels, 'AAABBBCC')
@@ -129,12 +111,7 @@ class FinnishSoundex(Soundex):
 
     def transform(self, word):
         word = self._cyrillic2latin(word)
-        word = self.__sh_replacement.sub('s', word)
-        word = self.__ng_replacement.sub('n', word)
-        word = self.__z_replacement.sub('ts', word)
-        word = self.__q_replacement.sub('kv', word)
-        word = self.__w_replacement.sub('v', word)
-        word = self.__x_replacement.sub('ks', word)
+        word = self.__rule_set.reduce_phonemes(word)
         return self._apply_soundex_algorithm(word)
 
 
@@ -160,7 +137,7 @@ class SwedenSoundex(Soundex):
     """
     Soundex for Sweden language
     """
-    __replacement_map = SE_PHONEMES
+    __rule_set = SwedenRuleSet()
 
     _vowels = SE_VOWELS
     _vowels_table = str.maketrans(_vowels, 'AABBBBBCC')
@@ -170,8 +147,7 @@ class SwedenSoundex(Soundex):
         word = self._cyrillic2latin(word)
         if word.endswith('on') and not word.endswith('hon'):
             word = word[:-2] + 'ån'
-        for replace, result in self.__replacement_map:
-            word = replace.sub(result, word)
+        word = self.__rule_set.reduce_phonemes(word)
         word = word.replace('sh', 'z')
         word = word.replace('hf', 'x')
         return self._apply_soundex_algorithm(word)
@@ -184,11 +160,6 @@ class RussianSoundex(Soundex):
     __ego_ogo_endings = re.compile(r'([ео])(г)(о$)', re.I)
     __ia_ending = re.compile(r'[еи][ая]', re.I)
     __ii_ending = re.compile(r'и[еио]', re.I)
-
-    __replacement_j_map = RU_REPLACEMENT_J_MAP
-    __replacement_vowel_map = RU_REPLACEMENT_VOWEL_MAP
-    __remove_map = RU_REMOVE_MAP
-    __replacement_phoneme_map = RU_PHONEMES
 
     _vowels = RU_VOWELS
     _vowels_table = str.maketrans(_vowels, 'AAAABBBBCC')
@@ -217,6 +188,7 @@ class RussianSoundex(Soundex):
                                              delete_zeros, code_vowels, cut_result, seq_cutted_len)
 
         self.reduce_phonemes = reduce_phonemes
+        self.rule_set = RussianRuleSet()
         self.use_morph_analysis = use_morph_analysis
         self.replace_ego_ogo_endings = True if self.use_morph_analysis else replace_ego_ogo_endings
         if self.use_morph_analysis:
@@ -235,15 +207,8 @@ class RussianSoundex(Soundex):
         return word
 
     def _reduce_phonemes(self, word):
-        for replace, result in self.__replacement_j_map + \
-                               self.__replacement_vowel_map + \
-                               self.__replacement_phoneme_map:
-            word = replace.sub(result, word)
-        return word
-
-    def _replace_j_and_signs(self, word):
-        for replace, result in self.__remove_map:
-            word = replace.sub(result, word)
+        word = self.rule_set.replace_j_vowel_phonemes(word)
+        word = self.rule_set.reduce_phonemes(word)
         return word
 
     def transform(self, word):
@@ -259,5 +224,5 @@ class RussianSoundex(Soundex):
             word = self._reduce_phonemes(word)
         if self._code_vowels:
             word = self._replace_vowels_seq(word)
-        word = self._replace_j_and_signs(word)
+        word = self.rule_set.replace_j_and_signs(word)
         return self._apply_soundex_algorithm(word)
