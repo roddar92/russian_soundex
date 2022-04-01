@@ -16,6 +16,10 @@ SE_VOWL = 'eiyöäj'
 J_SEQ_RU = r'^|ъ|ь'
 J_VOWEL_SEQ_RU = r'|'.join(RU_VOWELS)
 
+RU_EGO_OGO_ENDING = re.compile(r'([ео])(г)(о$)', re.I)
+RU_IA_ENDING = re.compile(r'[еи][ая]', re.I)
+RU_II_ENDING = re.compile(r'и[еио]', re.I)
+
 EN_REMOVE_MAP = [
     (re.compile(r'[hw]', re.I), '')
 ]

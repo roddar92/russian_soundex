@@ -54,22 +54,29 @@ class RussianMetaphone(Metaphone):
     """
     Metaphone for Russian language
     """
-    __j_vowel_regex = re.compile(r'и[ео]', re.I)
 
     _vowels = RU_VOWELS
     _deaf_consonants_seq = RU_DEAF_CONSONANTS
     _deaf_consonants = str.maketrans(_deaf_consonants_seq, 'пстфк')
     _vowels_table = str.maketrans(_vowels, 'ААААИИИИУУ')
 
-    def __init__(self, compress_ending=False, reduce_phonemes=False):
+    def __init__(self, compress_ending=False, reduce_phonemes=False, replace_ego_ogo_endings=False):
+        """
+        Initialization of Russian Metaphone object
+        :param compress_ending: compress an ending of the transcribed word
+        :param reduce_phonemes: simplify sequences of Russian consonants
+        :param replace_ego_ogo_endings: replace "-его/-ого" endings with "-ево/-ово"
+        :param use_morph_analysis: use morphological analysis for "-его/-ого" replacement
+        """
         super().__init__(compress_ending)
         self.reduce_phonemes = reduce_phonemes
+        self.replace_ego_ogo_endings = replace_ego_ogo_endings
         self.rule_set = RussianRuleSet()
 
     def __replace_j_vowels(self, word):
         word = self.rule_set.replace_j_vowel_phonemes(word)
         word = self.rule_set.replace_j_and_signs(word)
-        return self.__j_vowel_regex.sub('и', word)
+        return self.rule_set.replace_ii_ending(word)
 
     def _compress_ending(self, word):
         return word
@@ -79,6 +86,8 @@ class RussianMetaphone(Metaphone):
 
     def transform(self, word):
         word = self._latin2cyrillic(word)
+        if self.replace_ego_ogo_endings:
+            word = self.rule_set.replace_ego_ogo_ending(word)
         if self.reduce_phonemes:
             word = self.rule_set.reduce_phonemes(word)
         word = self.__replace_j_vowels(word)

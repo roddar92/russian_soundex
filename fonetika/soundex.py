@@ -15,30 +15,30 @@ class Soundex(BasePhoneticsAlgorithm):
     _vowels_regex = re.compile(r'(0+)', re.I)
 
     def __init__(self, delete_first_letter=False, delete_first_coded_letter=False, reduce_word=True,
-                 delete_zeros=False, code_vowels=False, cut_result=False, seq_cutted_len=4):
+                 delete_zeros=False, cut_result=False, seq_cutted_len=4, code_vowels=False):
         """
         Initialization of Soundex object
         :param delete_first_letter: remove the first letter from the result code (A169 -> 169)
         :param delete_first_coded_letter: remove the first coded letter from the result code (A0169 -> A169)
         :param reduce_word: reduce repeated characters (A00169 -> A0169)
         :param delete_zeros: remove vowels from the result code
-        :param code_vowels: group and code vowels as ABC letters
         :param cut_result: cut result core till N symbols
         :param seq_cutted_len: length of the result code
+        :param code_vowels: group and code vowels as ABC letters
         """
         self.__delete_first_letter = delete_first_letter
         self.__delete_first_coded_letter = delete_first_coded_letter
         self.__reduce_word = reduce_word
         self.__delete_zeros = delete_zeros
-        self._code_vowels = code_vowels
         self.__cut_result = cut_result
         self.__seq_cutted_len = seq_cutted_len
+        self.__code_vowels = code_vowels
 
     def __is_vowel(self, letter):
         return letter in self._vowels
 
     def __translate_vowels(self, word):
-        if self._code_vowels:
+        if self.__code_vowels:
             return word.translate(self._vowels_table)
         else:
             return ''.join('0' if self.__is_vowel(letter) else letter for letter in word)
@@ -94,8 +94,6 @@ class EnglishSoundex(Soundex):
     def transform(self, word):
         word = self._cyrillic2latin(word)
         word = self.__rule_set.remove_empty_sounds(word)
-        if self._code_vowels:
-            word = self._replace_vowels_seq(word)
         return self._apply_soundex_algorithm(word)
 
 
@@ -157,9 +155,6 @@ class RussianSoundex(Soundex):
     """
     Soundex for Russian language
     """
-    __ego_ogo_endings = re.compile(r'([ео])(г)(о$)', re.I)
-    __ia_ending = re.compile(r'[еи][ая]', re.I)
-    __ii_ending = re.compile(r'и[еио]', re.I)
 
     _vowels = RU_VOWELS
     _vowels_table = str.maketrans(_vowels, 'AAAABBBBCC')
@@ -185,7 +180,7 @@ class RussianSoundex(Soundex):
         :param use_morph_analysis: use morphological analysis for "-его/-ого" replacement
         """
         super(RussianSoundex, self).__init__(delete_first_letter, delete_first_coded_letter, reduce_word,
-                                             delete_zeros, code_vowels, cut_result, seq_cutted_len)
+                                             delete_zeros, cut_result, seq_cutted_len, code_vowels)
 
         self.reduce_phonemes = reduce_phonemes
         self.rule_set = RussianRuleSet()
@@ -199,11 +194,11 @@ class RussianSoundex(Soundex):
         if self.use_morph_analysis:
             parse = self.__moprh.parse(word)
             is_applicable = parse and any(pos_tag in parse[0].tag for pos_tag in self.SPEC_ENDING_POSTAGS)
-        return self.__ego_ogo_endings.sub(r'\1в\3', word) if is_applicable else word
+        return self.rule_set.replace_ego_ogo_ending(word) if is_applicable else word
 
     def _replace_vowels_seq(self, word):
-        word = self.__ii_ending.sub('и', word)
-        word = self.__ia_ending.sub('я', word)
+        word = self.rule_set.replace_ii_ending(word)
+        word = self.rule_set.replace_ia_ending(word)
         return word
 
     def _reduce_phonemes(self, word):
@@ -222,7 +217,5 @@ class RussianSoundex(Soundex):
             word = self.__replace_ego_ogo_endings(word)
         if self.reduce_phonemes:
             word = self._reduce_phonemes(word)
-        if self._code_vowels:
-            word = self._replace_vowels_seq(word)
         word = self.rule_set.replace_j_and_signs(word)
         return self._apply_soundex_algorithm(word)
