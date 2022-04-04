@@ -34,6 +34,14 @@ EN_PHONEMES = [
     (re.compile(r'(e[ae]r|ere)$', re.I), 'ie')
 ]
 
+EE_PHONEMES = [
+    (re.compile(r'[cz]', re.I), 'ts'),
+    (re.compile(r'q', re.I), 'kv'),
+    (re.compile(r'w', re.I), 'v'),
+    (re.compile(r'x', re.I), 'ks'),
+    (re.compile(r'y', re.I), 'i')
+]
+
 FI_PHONEMES = [
     (re.compile(r'sh', re.I), 's'),
     (re.compile(r'ng', re.I), 'n'),

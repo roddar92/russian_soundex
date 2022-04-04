@@ -1,9 +1,7 @@
-import re
-
 from .base.base import BasePhoneticsAlgorithm
 from .config import FI_VOWELS, RU_VOWELS, EE_VOWELS, RU_DEAF_CONSONANTS, \
     EE_FI_DEAF_CONSONANTS, SE_VOWELS, SE_DEAF_CONSONANTS
-from .ruleset import RussianRuleSet, SwedenRuleSet, FinnishRuleSet
+from .ruleset import EstonianRuleSet, FinnishRuleSet, RussianRuleSet, SwedenRuleSet
 
 
 class Metaphone(BasePhoneticsAlgorithm):
@@ -34,7 +32,8 @@ class Metaphone(BasePhoneticsAlgorithm):
             res += [letter]
         return ''.join(res)
 
-    def __compress_word_ending(self, word):
+    @staticmethod
+    def __compress_word_ending(word):
         return word
 
     def _apply_metaphone_algorithm(self, word):
@@ -66,7 +65,6 @@ class RussianMetaphone(Metaphone):
         :param compress_ending: compress an ending of the transcribed word
         :param reduce_phonemes: simplify sequences of Russian consonants
         :param replace_ego_ogo_endings: replace "-его/-ого" endings with "-ево/-ово"
-        :param use_morph_analysis: use morphological analysis for "-его/-ого" replacement
         """
         super().__init__(compress_ending)
         self.reduce_phonemes = reduce_phonemes
@@ -78,7 +76,8 @@ class RussianMetaphone(Metaphone):
         word = self.rule_set.replace_j_and_signs(word)
         return self.rule_set.replace_ii_ending(word)
 
-    def _compress_ending(self, word):
+    @staticmethod
+    def _compress_ending(word):
         return word
 
     def _deaf_consonants_letters(self, word):
@@ -118,11 +117,7 @@ class EstonianMetaphone(Metaphone):
     """
     Metaphone for Estonian language
     """
-    __cz_replacement = re.compile(r'[cz]', re.I)
-    __q_replacement = re.compile(r'q', re.I)
-    __w_replacement = re.compile(r'w', re.I)
-    __x_replacement = re.compile(r'x', re.I)
-    __y_replacement = re.compile(r'y', re.I)
+    __rule_set = EstonianRuleSet()
 
     _vowels = EE_VOWELS
     _deaf_consonants_seq = EE_FI_DEAF_CONSONANTS
@@ -134,11 +129,7 @@ class EstonianMetaphone(Metaphone):
 
     def transform(self, word):
         word = self._cyrillic2latin(word)
-        word = self.__cz_replacement.sub('ts', word)
-        word = self.__q_replacement.sub('kv', word)
-        word = self.__w_replacement.sub('v', word)
-        word = self.__x_replacement.sub('ks', word)
-        word = self.__y_replacement.sub('i', word)
+        word = self.__rule_set.reduce_phonemes(word)
         return self._apply_metaphone_algorithm(word)
 
 

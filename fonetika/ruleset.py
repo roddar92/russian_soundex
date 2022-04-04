@@ -2,19 +2,27 @@ from abc import ABC, abstractmethod
 
 from .config import EN_REMOVE_MAP, RU_PHONEMES, RU_REMOVE_MAP, \
     RU_REPLACEMENT_J_MAP, RU_REPLACEMENT_VOWEL_MAP, \
-    EN_PHONEMES, FI_PHONEMES, SE_PHONEMES, \
+    EN_PHONEMES, EE_PHONEMES, FI_PHONEMES, SE_PHONEMES, \
     RU_EGO_OGO_ENDING, RU_IA_ENDING, RU_II_ENDING
 
 
 class RuleSet(ABC):
     @abstractmethod
+    def _replacement_phoneme_map(self):
+        """
+        :return: list of substitution rules
+        """
+        return []
+
     def reduce_phonemes(self, word):
         """
         Transcripts a given word into phonological sequence by language rules
         :param word: string
         :return: modified string
         """
-        return None
+        for replace, result in self._replacement_phoneme_map():
+            word = replace.sub(result, word)
+        return word
 
 
 class RussianRuleSet(RuleSet):
@@ -24,10 +32,12 @@ class RussianRuleSet(RuleSet):
     __replacement_j_map = RU_REPLACEMENT_J_MAP
     __replacement_vowel_map = RU_REPLACEMENT_VOWEL_MAP
     __remove_map = RU_REMOVE_MAP
-    __replacement_phoneme_map = RU_PHONEMES
     __ia_ending = RU_IA_ENDING
     __ii_ending = RU_II_ENDING
     __ego_ogo_endings = RU_EGO_OGO_ENDING
+
+    def _replacement_phoneme_map(self):
+        return RU_PHONEMES
 
     def replace_j_vowel_phonemes(self, word):
         for replace, result in self.__replacement_j_map + \
@@ -49,49 +59,41 @@ class RussianRuleSet(RuleSet):
             word = replace.sub(result, word)
         return word
 
-    def reduce_phonemes(self, word):
-        for replace, result in self.__replacement_phoneme_map:
-            word = replace.sub(result, word)
-        return word
-
 
 class SwedenRuleSet(RuleSet):
     """
     Transcription rules for Swedish language
     """
-    __replacement_phoneme_map = SE_PHONEMES
+    def _replacement_phoneme_map(self):
+        return SE_PHONEMES
 
-    def reduce_phonemes(self, word):
-        for replace, result in self.__replacement_phoneme_map:
-            word = replace.sub(result, word)
-        return word
+
+class EstonianRuleSet(RuleSet):
+    """
+    Transcription rules for Estonian language
+    """
+    def _replacement_phoneme_map(self):
+        return EE_PHONEMES
 
 
 class FinnishRuleSet(RuleSet):
     """
     Transcription rules for Finnish language
     """
-    __replacement_phoneme_map = FI_PHONEMES
-
-    def reduce_phonemes(self, word):
-        for replace, result in self.__replacement_phoneme_map:
-            word = replace.sub(result, word)
-        return word
+    def _replacement_phoneme_map(self):
+        return FI_PHONEMES
 
 
 class EnglishRuleSet(RuleSet):
     """
     Transcription rules for English language
     """
-    __replacement_phoneme_map = EN_PHONEMES
+    def _replacement_phoneme_map(self):
+        return EN_PHONEMES
+
     __remove_map = EN_REMOVE_MAP
 
     def remove_empty_sounds(self, word):
         for replace, result in self.__remove_map:
-            word = replace.sub(result, word)
-        return word
-
-    def reduce_phonemes(self, word):
-        for replace, result in self.__replacement_phoneme_map:
             word = replace.sub(result, word)
         return word
