@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from .config import EN_REMOVE_MAP, RU_PHONEMES, RU_REMOVE_MAP, \
-    RU_REPLACEMENT_J_MAP, RU_REPLACEMENT_VOWEL_MAP, \
+    RU_REPLACEMENT_J_MAP, RU_REPLACEMENT_VOWEL_MAP, RU_REPLACEMENT_CONSONANT_MAP, \
     EN_PHONEMES, EE_PHONEMES, FI_PHONEMES, SE_PHONEMES, \
     RU_EGO_OGO_ENDING, RU_IA_ENDING, RU_II_ENDING
 
@@ -14,15 +14,18 @@ class RuleSet(ABC):
         """
         return []
 
+    def _replace_rules(self, word, rules):
+        for replace, result in rules:
+            word = replace.sub(result, word)
+        return word
+
     def reduce_phonemes(self, word):
         """
         Transcripts a given word into phonological sequence by language rules
         :param word: string
         :return: modified string
         """
-        for replace, result in self._replacement_phoneme_map():
-            word = replace.sub(result, word)
-        return word
+        return self._replace_rules(word, self._replacement_phoneme_map())
 
 
 class RussianRuleSet(RuleSet):
@@ -31,6 +34,7 @@ class RussianRuleSet(RuleSet):
     """
     __replacement_j_map = RU_REPLACEMENT_J_MAP
     __replacement_vowel_map = RU_REPLACEMENT_VOWEL_MAP
+    __replacement_consonant_map = RU_REPLACEMENT_CONSONANT_MAP
     __remove_map = RU_REMOVE_MAP
     __ia_ending = RU_IA_ENDING
     __ii_ending = RU_II_ENDING
@@ -39,11 +43,8 @@ class RussianRuleSet(RuleSet):
     def _replacement_phoneme_map(self):
         return RU_PHONEMES
 
-    def replace_j_vowel_phonemes(self, word):
-        for replace, result in self.__replacement_j_map + \
-                               self.__replacement_vowel_map:
-            word = replace.sub(result, word)
-        return word
+    def replace_consonant_vowels(self, word):
+        return self._replace_rules(word, self.__replacement_consonant_map)
 
     def replace_ego_ogo_ending(self, word):
         return self.__ego_ogo_endings.sub(r'\1в\3', word)
@@ -55,9 +56,10 @@ class RussianRuleSet(RuleSet):
         return self.__ii_ending.sub('и', word)
 
     def replace_j_and_signs(self, word):
-        for replace, result in self.__remove_map:
-            word = replace.sub(result, word)
-        return word
+        return self._replace_rules(word, self.__remove_map)
+
+    def replace_j_vowel_phonemes(self, word):
+        return self._replace_rules(word, self.__replacement_j_map + self.__replacement_vowel_map)
 
 
 class SwedenRuleSet(RuleSet):
@@ -94,6 +96,4 @@ class EnglishRuleSet(RuleSet):
     __remove_map = EN_REMOVE_MAP
 
     def remove_empty_sounds(self, word):
-        for replace, result in self.__remove_map:
-            word = replace.sub(result, word)
-        return word
+        return self._replace_rules(word, self.__remove_map)

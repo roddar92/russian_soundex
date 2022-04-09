@@ -200,6 +200,7 @@ class RussianSoundex(Soundex):
         return word
 
     def _reduce_phonemes(self, word):
+        word = self.rule_set.replace_consonant_vowels(word)
         word = self.rule_set.replace_j_vowel_phonemes(word)
         word = self.rule_set.reduce_phonemes(word)
         return word

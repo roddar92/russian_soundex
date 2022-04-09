@@ -5,16 +5,18 @@ EE_VOWELS = 'aäoeöõiüu'
 SE_VOWELS = 'aåäeöiyou'
 FI_VOWELS = 'aäoeöiyu'
 RU_VOWELS = 'аяоыиеёэюу'
-
+RU_DEAF_VOWELS = 'аоыиэу'
 
 EE_FI_DEAF_CONSONANTS = 'bvdg'
 SE_DEAF_CONSONANTS = 'bvdg'
 RU_DEAF_CONSONANTS = 'бздвг'
+RU_CONSONANTS = 'бвгджзклмнпрстфхцчшщ'
 
 SE_VOWL = 'eiyöäj'
 
 J_SEQ_RU = r'^|ъ|ь'
-J_VOWEL_SEQ_RU = r'|'.join(RU_VOWELS)
+J_VOWEL_SEQ_RU = r'|'.join(RU_DEAF_VOWELS)
+CONS_VOWEL_SEQ_RU = r'|'.join(RU_CONSONANTS)
 
 RU_EGO_OGO_ENDING = re.compile(r'([ео])(г)(о$)', re.I)
 RU_IA_ENDING = re.compile(r'[еи][ая]', re.I)
@@ -103,6 +105,13 @@ RU_REPLACEMENT_VOWEL_MAP = [
     (re.compile(r'(' + J_VOWEL_SEQ_RU + r')(ю)', re.I), r'\1jу'),
     (re.compile(r'(' + J_VOWEL_SEQ_RU + r')(е)', re.I), r'\1jэ'),
     (re.compile(r'(' + J_VOWEL_SEQ_RU + r')(ё)', re.I), r'\1jо')
+]
+
+RU_REPLACEMENT_CONSONANT_MAP = [
+    (re.compile(r'(' + CONS_VOWEL_SEQ_RU + r')(я)', re.I), r'\1а'),
+    (re.compile(r'(' + CONS_VOWEL_SEQ_RU + r')(ю)', re.I), r'\1у'),
+    (re.compile(r'(' + CONS_VOWEL_SEQ_RU + r')(е)', re.I), r'\1э'),
+    (re.compile(r'(' + CONS_VOWEL_SEQ_RU + r')(ё)', re.I), r'\1о')
 ]
 
 RU_REMOVE_MAP = [

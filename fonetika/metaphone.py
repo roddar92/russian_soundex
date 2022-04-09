@@ -72,6 +72,7 @@ class RussianMetaphone(Metaphone):
         self.rule_set = RussianRuleSet()
 
     def __replace_j_vowels(self, word):
+        word = self.rule_set.replace_consonant_vowels(word)
         word = self.rule_set.replace_j_vowel_phonemes(word)
         word = self.rule_set.replace_j_and_signs(word)
         return self.rule_set.replace_ii_ending(word)
