@@ -1,13 +1,14 @@
 import re
 
 from abc import ABC, abstractmethod
+from ..config import CYRILLIC_SYMBOLS, LATIN_SYMBOLS
 
 
 class BasePhoneticsAlgorithm(ABC):
     _vowels = ''
     __reduce_regex = re.compile(r'(\w)(\1)+', re.I)
-    __cyrillic2latin_table = str.maketrans('АВЕСКМОТРХУаескопртху', 'ABECKMOTPXYaeckonpmxy')
-    __latin2cyrillic_table = str.maketrans('ABECKMOTPXYaeckonpmxy', 'АВЕСКМОТРХУаескопртху')
+    __cyrillic2latin_table = str.maketrans(CYRILLIC_SYMBOLS, LATIN_SYMBOLS)
+    __latin2cyrillic_table = str.maketrans(LATIN_SYMBOLS, CYRILLIC_SYMBOLS)
 
     def _reduce_seq(self, seq):
         """

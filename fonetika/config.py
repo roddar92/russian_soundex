@@ -1,5 +1,8 @@
 import re
 
+CYRILLIC_SYMBOLS = 'АВЕСКМОТРХУаескопртху'
+LATIN_SYMBOLS = 'ABECKMOTPXYaeckonpmxy'
+
 EN_VOWELS = 'aoeiyu'
 EE_VOWELS = 'aäoeöõiüu'
 SE_VOWELS = 'aåäeöiyou'
