@@ -113,7 +113,6 @@ class EnglishMetaphoneRuleSet(RuleSet):
     __remove_map = EN_REMOVE_MAP
     __remove_vowels = EN_VOWELS_TO_REMOVE
 
-
     def remove_empty_sounds(self, word):
         return self._replace_rules(word, self.__remove_map)
 

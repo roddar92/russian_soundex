@@ -180,7 +180,6 @@ def test_metaphone_deaf_consonants():
         assert metaphone.transform(data) == expected
 
 
-
 def test_metaphone_deaf_consonants_and_reduce_vowels():
     metaphone = RussianMetaphone(reduce_phonemes=True, deaf_all_consonants=True, reduce_vowels=True)
     for data, expected in metaphone_params_deaf_consonants_and_reduce_vowels:
