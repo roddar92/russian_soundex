@@ -11,6 +11,7 @@ RU_VOWELS = 'аяоыиеёэюу'
 RU_DEAF_VOWELS = 'аоыиэу'
 
 EE_FI_DEAF_CONSONANTS = 'bvdg'
+EN_DEAF_CONSONANTS = 'dgqvz'
 SE_DEAF_CONSONANTS = 'bvdg'
 RU_DEAF_CONSONANTS = 'бздвг'
 RU_CONSONANTS = 'бвгджзклмнпрстфхцчшщ'
@@ -38,6 +39,30 @@ EN_PHONEMES = [
     (re.compile(r'([iy]e|[iy]re)$', re.I), 'ai'),
     (re.compile(r'(e[ae]r|ere)$', re.I), 'ie')
 ]
+
+EN_METAPHONE_PHONEMES = [
+    (re.compile(r'^([kgp])(n)', re.I), r'\2'),
+    (re.compile(r'^ae', re.I), 'e'),
+    (re.compile(r'^wr', re.I), 'r'),
+    (re.compile(r'mb$', re.I), 'm'),
+    (re.compile(r'(c)(ia)', re.I), r'x\2'),
+    (re.compile(r'sch', re.I), 'skh'),
+    (re.compile(r'[cs]h', re.I), 'x'),
+    (re.compile(r'th', re.I), '0'),
+    (re.compile(r'(c)([iey])', re.I), r's\2'),
+    (re.compile(r'c', re.I), 'k'),
+    (re.compile(r'(d)(g[iey])', re.I), r'j\2'),
+    (re.compile(rf'(g)(h)(?!($|[{EN_VOWELS}]))', re.I), r'j\2'),
+    (re.compile(r'(g)(n|ned)$', re.I), r'j\2'),
+    (re.compile(r'(?<!g)(g)([iey])', re.I), r'j\2'),
+    (re.compile(rf'(?<![{EN_VOWELS}])(h)([{EN_VOWELS}])', re.I), r'\2'),
+    (re.compile(r'ck', re.I), 'k'),
+    (re.compile(r'ph', re.I), 'f'),
+    (re.compile(r'^wh', re.I), 'w'),
+    (re.compile(rf'(w)([^{EN_VOWELS}])', re.I), r'\2')
+]
+
+EN_VOWELS_TO_REMOVE = [(re.compile(rf'[{EN_VOWELS}]', re.I), '')]
 
 EE_PHONEMES = [
     (re.compile(r'[cz]', re.I), 'ts'),
@@ -120,4 +145,9 @@ RU_REPLACEMENT_CONSONANT_MAP = [
 RU_REMOVE_MAP = [
     (re.compile(r'й', re.I), 'j'),
     (re.compile(r'[ъь]', re.I), '')
+]
+
+RU_VOWELS_TO_REMOVE = [
+    (re.compile(rf'[{RU_VOWELS}]', re.I), ''),
+    (re.compile(r'j', re.I), '')
 ]

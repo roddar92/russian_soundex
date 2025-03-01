@@ -1,5 +1,6 @@
 from fonetika.soundex import RussianSoundex, FinnishSoundex, SwedenSoundex
-from fonetika.metaphone import RussianMetaphone, FinnishMetaphone, SwedenMetaphone
+from fonetika.metaphone import RussianMetaphone, EnglishMetaphone, FinnishMetaphone, SwedenMetaphone
+
 
 metaphone_params = [
     ('шварцнегер', 'ШВАРЦНИГИР'),
@@ -16,6 +17,46 @@ metaphone_params = [
     ('кoрован', 'КАРАВАН'),
     ('весенняя', 'ВИСИНАJА'),
     ('полночь', 'ПАЛНАЧ')
+]
+
+metaphone_params_deaf_consonants = [
+    ('шварцнегер', 'ШФАРЦНИКИР'),
+    ('Швардснеггер', 'ШФАРЦНИКИР'),
+    ('Шворцнегир', 'ШФАРЦНИКИР'),
+    ('ландшафт', 'ЛАНШАФТ'),
+    ('рентген', 'РИНКИН'),
+    ('выборгский', 'ФАПАРСКИJ'),
+    ('хельсинкский', 'ХИЛСИНСКИJ'),
+    ('финляндский', 'ФИНЛАНСКИJ'),
+    ('фельдшер', 'ФИЛШИР'),
+    ('бильярд', 'ПИЛJАРТ'),
+    ('йогурт', 'JАКУРТ'),
+    ('кoрован', 'КАРАФАН'),
+    ('весенняя', 'ФИСИНАJА'),
+    ('полночь', 'ПАЛНАЧ')
+]
+
+metaphone_params_deaf_consonants_and_reduce_vowels = [
+    ('шварцнегер', 'ШФРЦНКР'),
+    ('Швардснеггер', 'ШФРЦНКР'),
+    ('Шворцнегир', 'ШФРЦНКР'),
+    ('ландшафт', 'ЛНШФТ'),
+    ('рентген', 'РНКН'),
+    ('выборгский', 'ФПРСК'),
+    ('хельсинкский', 'ХЛСНСК'),
+    ('финляндский', 'ФНЛНСК'),
+    ('фельдшер', 'ФЛШР'),
+    ('ясень', 'JАСН'),
+    ('бильярд', 'ПЛРТ'),
+    ('йогурт', 'JАКРТ'),
+    ('кoрован', 'КРФН'),
+    ('весенняя', 'ФСН'),
+    ('полночь', 'ПЛНЧ')
+]
+
+metaphone_english_params = [
+    ('english', 'ENKLX'),
+    ('breakfast', 'BRKFST')
 ]
 
 metaphone_finnish_params = [
@@ -130,6 +171,25 @@ soundex_sweden_params = [
 def test_metaphone():
     metaphone = RussianMetaphone(reduce_phonemes=True)
     for data, expected in metaphone_params:
+        assert metaphone.transform(data) == expected
+
+
+def test_metaphone_deaf_consonants():
+    metaphone = RussianMetaphone(reduce_phonemes=True, deaf_all_consonants=True)
+    for data, expected in metaphone_params_deaf_consonants:
+        assert metaphone.transform(data) == expected
+
+
+
+def test_metaphone_deaf_consonants_and_reduce_vowels():
+    metaphone = RussianMetaphone(reduce_phonemes=True, deaf_all_consonants=True, reduce_vowels=True)
+    for data, expected in metaphone_params_deaf_consonants_and_reduce_vowels:
+        assert metaphone.transform(data) == expected
+
+
+def test_english_metaphone():
+    metaphone = EnglishMetaphone(reduce_vowels=True)
+    for data, expected in metaphone_english_params:
         assert metaphone.transform(data) == expected
 
 

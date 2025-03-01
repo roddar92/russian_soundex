@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from .config import EN_REMOVE_MAP, RU_PHONEMES, RU_REMOVE_MAP, \
     RU_REPLACEMENT_J_MAP, RU_REPLACEMENT_VOWEL_MAP, RU_REPLACEMENT_CONSONANT_MAP, \
     EN_PHONEMES, EE_PHONEMES, FI_PHONEMES, SE_PHONEMES, \
-    RU_EGO_OGO_ENDING, RU_IA_ENDING, RU_II_ENDING
+    RU_EGO_OGO_ENDING, RU_IA_ENDING, RU_II_ENDING, EN_METAPHONE_PHONEMES, EN_VOWELS_TO_REMOVE, RU_VOWELS_TO_REMOVE
 
 
 class RuleSet(ABC):
@@ -36,6 +36,7 @@ class RussianRuleSet(RuleSet):
     __replacement_vowel_map = RU_REPLACEMENT_VOWEL_MAP
     __replacement_consonant_map = RU_REPLACEMENT_CONSONANT_MAP
     __remove_map = RU_REMOVE_MAP
+    __remove_vowels = RU_VOWELS_TO_REMOVE
     __ia_ending = RU_IA_ENDING
     __ii_ending = RU_II_ENDING
     __ego_ogo_endings = RU_EGO_OGO_ENDING
@@ -60,6 +61,9 @@ class RussianRuleSet(RuleSet):
 
     def replace_j_vowel_phonemes(self, word):
         return self._replace_rules(word, self.__replacement_j_map + self.__replacement_vowel_map)
+
+    def reduce_vowels(self, word):
+        return self._replace_rules(word, self.__remove_vowels)
 
 
 class SwedenRuleSet(RuleSet):
@@ -97,3 +101,21 @@ class EnglishRuleSet(RuleSet):
 
     def remove_empty_sounds(self, word):
         return self._replace_rules(word, self.__remove_map)
+
+
+class EnglishMetaphoneRuleSet(RuleSet):
+    """
+    Transcription rules for English language
+    """
+    def _replacement_phoneme_map(self):
+        return EN_METAPHONE_PHONEMES
+
+    __remove_map = EN_REMOVE_MAP
+    __remove_vowels = EN_VOWELS_TO_REMOVE
+
+
+    def remove_empty_sounds(self, word):
+        return self._replace_rules(word, self.__remove_map)
+
+    def reduce_vowels(self, word):
+        return self._replace_rules(word, self.__remove_vowels)
